@@ -42,7 +42,7 @@ rm(list = ls())
 
 ### set working directory
 ### need to change to your own settings!
-setwd("") # set your working directory
+
 
 
 
@@ -51,7 +51,7 @@ setwd("") # set your working directory
 ##########          load libraries and source files          ##########
 
 library(jpeg)      			#library for reading and writing jpg's
-source("Hemiphot.R")                #functions to carry out Hemiphot analysis
+source("sciripts/Hemiphot/Hemiphot.R")                #functions to carry out Hemiphot analysis
 days = seq(15,360,30)               #roughly each mid of the 12 months
 
 #######END          load libraries and source files          ##########
@@ -63,7 +63,7 @@ days = seq(15,360,30)               #roughly each mid of the 12 months
 ##########          load image and plot         ##########
 
 ### We assume colour images: FlevoPlot1.1.jpg is provided at Github
-im = readJPEG("FlevoPlot1.1.jpg", native = F)     #if native = T creates a raster, else an array
+im = readJPEG("sciripts/Hemiphot/FlevoPlot1.1.jpg", native = F)     #if native = T creates a raster, else an array
 
 
 ## convert to class HemiphotImage - adding a circle

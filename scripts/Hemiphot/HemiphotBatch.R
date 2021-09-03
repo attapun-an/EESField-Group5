@@ -95,7 +95,7 @@ all.data[,1] = all.images
 
 ## now the batch can start
 t1 = Sys.time()
-for(i in 1:nr.images){    
+for(i in 1:nr.images){  # 1:nr.images = 1 to nr.images (i.e. [1:3, ]) it's just telling it to start at 1 (which I thought it does automatically)                              
   ## read file
   image = readJPEG(paste("images/",all.images[i],sep = ""), native = F)     #if native = T creates a raster, else an array
 
@@ -135,7 +135,7 @@ t2 = Sys.time()
 
 head(All.Data)
 
-** save data
+## save data
 write.table(All.Data, "HemiphotOutput.csv", sep = ",")
 
 
