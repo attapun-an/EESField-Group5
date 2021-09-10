@@ -21,11 +21,12 @@ head(Plot_Data)
 str(Plot_Data)
 
 # data cleaning and alignment ----
-Hemi_Data <- Hemi_Data %>% 
-  select(File, CanOpen, LAI) %>% 
-  rename(File.name = File)
+Hemi_Data_1 <- Hemi_Data %>% 
+  select(File, CanOpen, LAI) %>%                                                # remove unwanted rows
+  rename(File.name = File)                                                      
 
-Plot_Data <- Plot_Data %>%
+Plot_Data_1 <- Plot_Data %>%
   select(Overstorey.Species, Number.of.trees.in.plot, File.name) %>% 
-  mutate(File.name = paste("EE5_",File.name, sep = ""))
-  
+  mutate(File.name = paste("EE5_",File.name,".JPG", sep = ""))
+
+Combined_Data <- left_join(Plot_Data_1, Hemi_Data_1, by="File.name")
