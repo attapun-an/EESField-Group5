@@ -8,10 +8,9 @@ rm(list=ls())  # clear memory
 
 # load libraries and source files ----
 library(jpeg)
-library(grid)
-library(gridExtra)
 source("scripts/Hemiphot/Hemiphot.R")
 source("scripts/fov_func.R")
+
 
 # Process sample image ---- 
 
@@ -73,6 +72,7 @@ text(x = 100, y = 500,labels = paste(threshold_3), pos = 4, col = "#FFFFFF" )
 dev.off()
 
 # BATCH CODE - variables ----
+# run this before running any of the batch covdes
 
 all.images = list.files("images/field/",pattern = ".JPG")                        # list all images in a directory
 nr.images = length(all.images); nr.images                                       # number of images
@@ -87,10 +87,10 @@ all.data[,1] = all.images
 
 
 ## determine in Hemiphot.R and fill in here for batch processing
-location.cr         = radius             # radius of circle as calculated befrore
-location.threshold  = 0.55
+location.cr         = 696             # radius of circle as calculated befrore
+location.threshold  = 0.70
 
-# BATCH CODE - logic ----
+# BATCH CODE - calculate LAI ----
 
 for(i in 1:nr.images){  # 1:nr.images = 1 to nr.images (i.e. [1:3, ]) it's just telling it to start at 1 (which I thought it does automatically)                              
   ## read file
@@ -122,14 +122,14 @@ head(all.data)
 write.table(all.data, "output/image-analysis-output.csv", sep = ",")
 
 
-# batch generate images ----
+# BATCH GENERATE IMAGES ----
 
-for(i in 1:nr.images){  # 1:nr.images = 1 to nr.images (i.e. [1:3, ]) it's just telling it to start at 1 (which I thought it does automatically)                              
+for(i in 1:nr.images){  
   ## read file
-  image = readJPEG(paste("images/field/",all.images[i],sep = ""), native = F)     #if native = T creates a raster, else an array
+  image_origin = readJPEG(paste("images/field/",all.images[i],sep = ""), native = F)     #if native = T creates a raster, else an array
   
   ## conver to Hemi image
-  image = Image2Hemiphot(image)
+  image = Image2Hemiphot(image_origin)
   
   ## set cirlce parameters
   image = SetCircle(image, cr = location.cr)
@@ -148,5 +148,18 @@ for(i in 1:nr.images){  # 1:nr.images = 1 to nr.images (i.e. [1:3, ]) it's just 
   lai = CalcLAI(fractions = gap.fractions)
   
   # generate images
+  jpeg(paste("output/thresholds/", paste(formatC(i, width = 2, flag = "0"), "thresh", sep = "_")
+             , ".jpg", sep = ""), width = 1500, height = 1080, units = "px", pointsize = 32)
+  ThresholdImage(im = image, th = location.threshold, draw.image = T)
+  text(x = 100, y = 500,labels = paste("CO:", round(canopy_openness,4),
+                                       "\n","LAI:", round(lai, 4), sep = ""), pos = 4, col = "#FFFFFF" )
+  dev.off()
   
+  jpeg(paste("output/thresholds/", paste(formatC(i, width = 2, flag = "0"), "origin", sep = "_")
+             , ".jpg", sep = ""), width = 1500, height = 1080, units = "px", pointsize = 32)
+  blue = Image2Hemiphot(image_origin)
+  blue = SetCircle(blue, cr = location.cr)
+  PlotHemiImage(image = blue, draw.circle = T, channel = "B")
+  dev.off()
 }
+
