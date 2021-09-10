@@ -8,9 +8,12 @@ rm(list=ls())  # clear memory
 
 # load libraries and source files ----
 library(jpeg)
+library(grid)
+library(gridExtra)
 source("scripts/Hemiphot/Hemiphot.R")
 source("scripts/fov_func.R")
 
+# Process sample image ---- 
 
 # read a sample image file
 im <- readJPEG("images/field/EE5_2907.JPG", native = F) 
@@ -33,16 +36,19 @@ PlotHemiImage(im.hemi)   # preview the plot
 
 # check channels and output images to output/image_test
 jpeg("output/image_test/Channel_Red.jpg", width = 1500, height = 1080, units = "px", pointsize = 32)
-PlotHemiImage(im.hemi, draw.circle = T, channel = "R")
+Channel_R <- PlotHemiImage(im.hemi, draw.circle = T, channel = "R")
 dev.off()
+
 jpeg("output/image_test/Channel_Green.jpg", width = 1500, height = 1080, units = "px", pointsize = 32)
-PlotHemiImage(im.hemi, draw.circle = T, channel = "G")
+Channel_G <- PlotHemiImage(im.hemi, draw.circle = T, channel = "G")
 dev.off()
+
 jpeg("output/image_test/Channel_Blue.jpg", width = 1500, height = 1080, units = "px", pointsize = 32)
-PlotHemiImage(im.hemi, draw.circle = T, channel = "B")
+Channel_B <- PlotHemiImage(im.hemi, draw.circle = T, channel = "B")
 dev.off()
 # blue has the best contrast
 
+# Store blue channel
 im.blue = SelectRGB(im.hemi, "B")
 PlotHemiImage(im.blue, draw.circle = T)
 
@@ -53,36 +59,18 @@ threshold_3 = 0.60
 
 jpeg("output/image_test/t1.jpg", width = 1500, height = 1080, units = "px", pointsize = 32)
 image.th_1= ThresholdImage(image = im.blue, th = threshold_1, draw.image = T)
+text(x = 100, y = 500,labels = paste(threshold_1), pos = 4, col = "#FFFFFF" )
 dev.off()
 
 jpeg("output/image_test/t2.jpg", width = 1500, height = 1080, units = "px", pointsize = 32)
-image.th_1= ThresholdImage(image = im.blue, th = threshold_2, draw.image = T)
+image.th_2= ThresholdImage(image = im.blue, th = threshold_2, draw.image = T)
+text(x = 100, y = 500,labels = paste(threshold_2), pos = 4, col = "#FFFFFF" )
 dev.off()
 
 jpeg("output/image_test/t3.jpg", width = 1500, height = 1080, units = "px", pointsize = 32)
-image.th_1= ThresholdImage(image = im.blue, th = threshold_3, draw.image = T)
+image.th_3= ThresholdImage(image = im.blue, th = threshold_3, draw.image = T)
+text(x = 100, y = 500,labels = paste(threshold_3), pos = 4, col = "#FFFFFF" )
 dev.off()
-
-# Calculations of Hemiphot ----
-
-## canopy openness is calculated over 89 circles, each 360 points
-## these points can be visualized with draw.circles()
-
-PlotHemiImage(image.th, draw.circle = T) 
-DrawCircles(image.th[[2]], image.th[[3]], image.th[[4]])
-
-PlotHemiImage(image.th, draw.circle = T) 
-
-
-## calculate canopy cover based on canopy openess of the 89 circles
-## the openess by circle is stored in gap.fractions
-gap.fractions = CalcGapFractions(image.th)                                      # this needs to run before other calcs
-canopy.openness = CalcOpenness(fractions = gap.fractions); canopy.openness      # the colon and repeat just displays what it is
-
-
-## calculate LAI according to Licor's LAI Analyzer 
-canopy.LAI = CalcLAI(fractions = gap.fractions, width = 6); canopy.LAI # dependent on gap fractions
-
 
 # BATCH CODE - variables ----
 
@@ -132,3 +120,33 @@ head(all.data)
 
 # save data
 write.table(all.data, "output/image-analysis-output.csv", sep = ",")
+
+
+# batch generate images ----
+
+for(i in 1:nr.images){  # 1:nr.images = 1 to nr.images (i.e. [1:3, ]) it's just telling it to start at 1 (which I thought it does automatically)                              
+  ## read file
+  image = readJPEG(paste("images/field/",all.images[i],sep = ""), native = F)     #if native = T creates a raster, else an array
+  
+  ## conver to Hemi image
+  image = Image2Hemiphot(image)
+  
+  ## set cirlce parameters
+  image = SetCircle(image, cr = location.cr)
+  
+  ## select blue channel
+  image = SelectRGB(image, "B")
+  
+  #threshold
+  image = ThresholdImage(im = image, th = location.threshold, draw.image = F)
+  
+  # canopy openness
+  gap.fractions = CalcGapFractions(image)
+  canopy_openness = CalcOpenness(fractions = gap.fractions)
+  
+  ## calculate LAI according to Licor's LAI Analyzer 
+  lai = CalcLAI(fractions = gap.fractions)
+  
+  # generate images
+  
+}
