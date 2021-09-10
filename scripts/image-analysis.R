@@ -9,38 +9,63 @@ rm(list=ls())  # clear memory
 # load libraries and source files ----
 library(jpeg)
 source("scripts/Hemiphot/Hemiphot.R")
+source("scripts/fov_func.R")
 
 
+# read a sample image file
+im <- readJPEG("images/field/EE5_2907.JPG", native = F) 
 
-im <- readJPEG("images/field/EE5_2907.JPG", native = F)        # this turns into array
-
-# not sure what the difference is
-
-## convert to class HemiphotImage - adding a circle
-im.hemi = Image2Hemiphot(im)
+# convert to class HemiphotImage and plotting it
+im.hemi = Image2Hemiphot(im) 
 PlotHemiImage(image = im.hemi, draw.circle = T, channel = "")   #note that east and west are reversed as the image looks upward
+# note: this takes a while to run
 
-# adjusting image circle
-im.hemi = SetCircle(im.hemi, cx = 237, cy = 237, cr = 228)
-PlotHemiImage(im.hemi)
+# Calculating image circle to 60 degrees
+radius <- fov.px(30, 8, 5.95)  # this function was found on the HemiPhoto Guide, 
+# our FOV is 60 degrees, we divide by 2 to get degrees theta
+# 8 mm is the focal length of our lens
+# 5.95 is the pixel pitch of the Nikon D750
+
+# adjusting image circle to 60 degrees FOV
+im.hemi = SetCircle(im.hemi, cr = radius)
+PlotHemiImage(im.hemi)   # preview the plot
 
 
-# check channels and choose one with most contrast
+# check channels and output images to output/image_test
+jpeg("output/image_test/Channel_Red.jpg", width = 1500, height = 1080, units = "px", pointsize = 32)
 PlotHemiImage(im.hemi, draw.circle = T, channel = "R")
+dev.off()
+jpeg("output/image_test/Channel_Green.jpg", width = 1500, height = 1080, units = "px", pointsize = 32)
 PlotHemiImage(im.hemi, draw.circle = T, channel = "G")
+dev.off()
+jpeg("output/image_test/Channel_Blue.jpg", width = 1500, height = 1080, units = "px", pointsize = 32)
 PlotHemiImage(im.hemi, draw.circle = T, channel = "B")
-# they all look the same -_- (they said blue might be best?)
+dev.off()
+# blue has the best contrast
 
 im.blue = SelectRGB(im.hemi, "B")
 PlotHemiImage(im.blue, draw.circle = T)
 
-# Threshold the image ----
-threshold = 0.55  # value between 0 and 1
-image.th = ThresholdImage(image = im.blue, th = threshold, draw.image = T)
+# Threshold the image at 3 levels and see which one works best----
+threshold_1 = 0.40 
+threshold_2 = 0.50
+threshold_3 = 0.60
+
+jpeg("output/image_test/t1.jpg", width = 1500, height = 1080, units = "px", pointsize = 32)
+image.th_1= ThresholdImage(image = im.blue, th = threshold_1, draw.image = T)
+dev.off()
+
+jpeg("output/image_test/t2.jpg", width = 1500, height = 1080, units = "px", pointsize = 32)
+image.th_1= ThresholdImage(image = im.blue, th = threshold_2, draw.image = T)
+dev.off()
+
+jpeg("output/image_test/t3.jpg", width = 1500, height = 1080, units = "px", pointsize = 32)
+image.th_1= ThresholdImage(image = im.blue, th = threshold_3, draw.image = T)
+dev.off()
 
 # Calculations of Hemiphot ----
 
-## canopy openess is calculated over 89 circles, each 360 points
+## canopy openness is calculated over 89 circles, each 360 points
 ## these points can be visualized with draw.circles()
 
 PlotHemiImage(image.th, draw.circle = T) 
@@ -67,16 +92,12 @@ nr.images = length(all.images); nr.images                                       
 
 ## Create data frame to hold all results
 all.data = data.frame(matrix(0, nr.images, 7))
-names(all.data) = c("File", "CanOpen", "LAI",
-                    "DirectAbove", "DiffAbove",
-                    "DirectBelow", "DiffBelow")
+names(all.data) = c("File", "CanOpen", "LAI")
 all.data[,1] = all.images
 
 # The batch code ----
 
 ## determine in Hemiphot.R and fill in here for batch processing
-location.cx         = 237             # x coordinate of center
-location.cy         = 237             # y coordinate of center
 location.cr         = 228             # radius of circle
 location.threshold  = 0.55
 
@@ -89,7 +110,7 @@ for(i in 1:nr.images){  # 1:nr.images = 1 to nr.images (i.e. [1:3, ]) it's just 
   image = Image2Hemiphot(image)
   
   ## set cirlce parameters
-  image = SetCircle(image, cx = location.cx, cy = location.cy, cr = location.cr)
+  image = SetCircle(image, cr = location.cr)
   
   ## select blue channel
   image = SelectRGB(image, "B")
