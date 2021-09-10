@@ -84,27 +84,29 @@ canopy.openness = CalcOpenness(fractions = gap.fractions); canopy.openness      
 canopy.LAI = CalcLAI(fractions = gap.fractions, width = 6); canopy.LAI # dependent on gap fractions
 
 
-# Try to run batch code ----
+# BATCH CODE - variables ----
 
-all.images = list.files("images/test/",pattern = ".jpg")                        # list all images in a directory
+all.images = list.files("images/field/",pattern = ".JPG")                        # list all images in a directory
 nr.images = length(all.images); nr.images                                       # number of images
 
 
 ## Create data frame to hold all results
 all.data = data.frame(matrix(0, nr.images, 7))
-names(all.data) = c("File", "CanOpen", "LAI")
+names(all.data) = c("File", "CanOpen", "LAI",
+                    "DirectAbove", "DiffAbove",
+                    "DirectBelow", "DiffBelow")
 all.data[,1] = all.images
 
-# The batch code ----
 
 ## determine in Hemiphot.R and fill in here for batch processing
-location.cr         = 228             # radius of circle
+location.cr         = radius             # radius of circle as calculated befrore
 location.threshold  = 0.55
 
+# BATCH CODE - logic ----
 
 for(i in 1:nr.images){  # 1:nr.images = 1 to nr.images (i.e. [1:3, ]) it's just telling it to start at 1 (which I thought it does automatically)                              
   ## read file
-  image = readJPEG(paste("images/test/",all.images[i],sep = ""), native = F)     #if native = T creates a raster, else an array
+  image = readJPEG(paste("images/field/",all.images[i],sep = ""), native = F)     #if native = T creates a raster, else an array
   
   ## conver to Hemi image
   image = Image2Hemiphot(image)
@@ -129,4 +131,4 @@ for(i in 1:nr.images){  # 1:nr.images = 1 to nr.images (i.e. [1:3, ]) it's just 
 head(all.data) 
 
 # save data
-write.table(all.data, "output/test-script_output.csv", sep = ",")
+write.table(all.data, "output/image-analysis-output.csv", sep = ",")
