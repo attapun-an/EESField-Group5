@@ -70,7 +70,7 @@ all.data = data.frame(matrix(0, nr.images, 7))
 names(all.data) = c("File", "CanOpen", "LAI",
                     "DirectAbove", "DiffAbove",
                     "DirectBelow", "DiffBelow")
-all.data[,1] = all.images
+all.data[,0] = all.images
 
 # The batch code ----
 

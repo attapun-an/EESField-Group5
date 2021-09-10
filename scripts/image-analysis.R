@@ -34,6 +34,7 @@ PlotHemiImage(im.hemi)   # preview the plot
 
 
 # check channels and output images to output/image_test
+# output to image because previewing in R takes too long
 jpeg("output/image_test/Channel_Red.jpg", width = 1500, height = 1080, units = "px", pointsize = 32)
 Channel_R <- PlotHemiImage(im.hemi, draw.circle = T, channel = "R")
 dev.off()
@@ -119,7 +120,7 @@ for(i in 1:nr.images){  # 1:nr.images = 1 to nr.images (i.e. [1:3, ]) it's just 
 head(all.data) 
 
 # save data
-write.table(all.data, "output/image-analysis-output.csv", sep = ",")
+write.csv(all.data, "output/image-analysis-output.csv")
 
 
 # BATCH GENERATE IMAGES ----
