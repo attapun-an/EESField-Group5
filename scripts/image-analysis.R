@@ -148,15 +148,13 @@ for(i in 1:nr.images){
   lai = CalcLAI(fractions = gap.fractions)
   
   # generate images
-  jpeg(paste("output/thresholds/", paste(formatC(i, width = 2, flag = "0"), "thresh", sep = "_")
-             , ".jpg", sep = ""), width = 1500, height = 1080, units = "px", pointsize = 32)
+  jpeg(paste("output/thresholds/", all.images[i], "thresh.jpg"), width = 1500, height = 1080, units = "px", pointsize = 32)
   ThresholdImage(im = image, th = location.threshold, draw.image = T)
   text(x = 100, y = 500,labels = paste("CO:", round(canopy_openness,4),
                                        "\n","LAI:", round(lai, 4), sep = ""), pos = 4, col = "#FFFFFF" )
   dev.off()
   
-  jpeg(paste("output/thresholds/", paste(formatC(i, width = 2, flag = "0"), "origin", sep = "_")
-             , ".jpg", sep = ""), width = 1500, height = 1080, units = "px", pointsize = 32)
+  jpeg(paste("output/thresholds/", all.images[i], "blue.jpg"), width = 1500, height = 1080, units = "px", pointsize = 32)
   blue = Image2Hemiphot(image_origin)
   blue = SetCircle(blue, cr = location.cr)
   PlotHemiImage(image = blue, draw.circle = T, channel = "B")
