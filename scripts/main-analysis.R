@@ -51,7 +51,8 @@ Species_Data_1 <- Species_Data %>%
     grepl("F", Group) ~ "Fungi",
     grepl("P", Group) ~ "Vascular.Plant",
     grepl("L", Group) ~ "Lichen")) %>% 
-  select(!Names) %>% 
+  select(!Names) %>%
+  drop_na() %>% 
   group_by(Plot.Number, Group) %>% 
   summarise(n = sum(Presence))
 
@@ -88,16 +89,17 @@ plot(m2)
 # VIsualize Data ----
 (CanOpenvsRichness_Plot <- ggplot(Combined_Data, aes(x = CanOpen, y = Alpha.Diversity))+
     geom_point(aes(colour = Overstorey.Species))+
-    geom_smooth(method = lm, color = "#A3A1A8")+
+    geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
     theme_bw()
     )
 
 (StockvsCanOpen_Plot <- ggplot(Combined_Data, aes(x = Number.of.trees.in.plot, y = CanOpen))+
     geom_point(aes(colour = Overstorey.Species))+
-    geom_smooth(method = lm, color = "#A3A1A8")+
+    geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
     theme_bw()
     )
 
 # Save Plots ----
 ggsave("output/plots/plot_CanOpenvsRichness.jpg", CanOpenvsRichness_Plot)
 ggsave("output/plots/plot_StockvsCanOpen.jpg", StockvsCanOpen_Plot)
+
