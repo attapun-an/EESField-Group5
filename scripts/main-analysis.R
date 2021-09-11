@@ -51,8 +51,10 @@ Species_Data_1 <- Species_Data %>%
     grepl("F", Group) ~ "Fungi",
     grepl("P", Group) ~ "Vascular.Plant",
     grepl("L", Group) ~ "Lichen")) %>% 
-  select(!Names) %>% 
-  pivot_wider(names_from = Plot.Number, values_from = Presence)
+  select(!Names)
+
+
+
   
 
 
