@@ -6,16 +6,14 @@
 rm(list=ls())  # clear memory
 
 # load libraries ----
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(bbplot)
-library(ggeffects)
+library(dplyr)      # for data manipulation
+library(ggplot2)    # to plot data
+library(ggeffects)  # in case we have a mixed effect model? (not used as of now)
 
 
 # import data ----
-Hemi_Data <- read.csv("output/image-analysis-output.csv")
-Plot_Data <- read.csv("data/Metadata.csv")
+Hemi_Data <- read.csv("output/image-analysis-output.csv")           # imports data from our LAI calcs
+Plot_Data <- read.csv("data/Metadata.csv")                          # imports data from the field
 
 #check data
 head(Hemi_Data)
@@ -24,26 +22,31 @@ head(Plot_Data)
 str(Plot_Data)
 
 # data cleaning and alignment ----
-Hemi_Data_1 <- Hemi_Data %>% 
-  select(File, CanOpen, LAI) %>%                                                # remove unwanted rows
-  rename(File.name = File)                                                      
 
+Hemi_Data_1 <- Hemi_Data %>% 
+  select(File, CanOpen, LAI) %>%       # remove unwanted rows
+  rename(File.name = File)             # rename so that the two have something in 
+                                       # common that can be used to join them 
+                                       
 Plot_Data_1 <- Plot_Data %>%
-  select(Overstorey.Species, Number.of.trees.in.plot, File.name, Alpha.Diversity) %>% 
-  mutate(File.name = paste("EE5_",File.name,".JPG", sep = "")) %>% 
-  mutate(Overstorey.Species = case_when(
-    grepl("Scots", substr(Overstorey.Species,1,5)) ~ "Scots pine",
+  select(Overstorey.Species, Number.of.trees.in.plot, File.name, Alpha.Diversity) %>%    # remove unwanted rows
+  mutate(File.name = paste("EE5_",File.name,".JPG", sep = "")) %>%                       # file number to file name so both are the same, helps with joining
+  mutate(Overstorey.Species = case_when(                               # creates 3 categories for dominant vegetation
+    grepl("Scots", substr(Overstorey.Species,1,5)) ~ "Scots pine",     
     grepl("Sitka", substr(Overstorey.Species,1,5)) ~ "Sitka spruce", 
     grepl("Larch", substr(Overstorey.Species,1,5))~"Larch"))
 
-Combined_Data <- left_join(Plot_Data_1, Hemi_Data_1, by="File.name")
-Combined_Data$Overstorey.Species <- as.factor(Combined_Data$Overstorey.Species)
+
+# combines the two data tables
+Combined_Data <- left_join(Plot_Data_1, Hemi_Data_1, by="File.name")        
+Combined_Data$Overstorey.Species <- as.factor(Combined_Data$Overstorey.Species) # changes data type of Overstorey.species to a factor 
 
 str(Combined_Data)
 head(Combined_Data)
 # Model ----
 
 # Canopy Openness vs. Species Richness
+# note (dependent ~ Independent)
 m1 <- lm(formula = Alpha.Diversity ~ CanOpen, data = Combined_Data)
 summary(m1)
 plot(m1) # plot residuals

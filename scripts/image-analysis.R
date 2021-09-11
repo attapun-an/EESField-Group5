@@ -3,22 +3,22 @@
 # attapun-an
 
 # NOTE TO GROUP 5: #############################################
-#
-#
-#
-#
-#
-#
-#
+# Heyyo, so the code is broken into 3 parts, the sample image, batch calculations
+# and batch image output. The first part is run just to get an idea of what settings
+# should be used for the batch processing (it's not really doing anything to our 
+# results. 
+# To run the batch stuff you need to load the libraries and the BATCH CODE - variables
+# first. 
 
 # Working directory is set to root directory (one above the script folder)
 rm(list=ls())  # clear memory
 
 
 # load libraries and source files ----
-library(jpeg)
-source("scripts/Hemiphot/Hemiphot.R")
-source("scripts/fov_func.R")
+library(jpeg)                                        # this library is used for importing photos
+source("scripts/Hemiphot/Hemiphot.R")                # this script helps process images and calculate LAI and Canopy Openess
+source("scripts/fov_func.R")                         # this script helps calculate how much we need to crop our image to get 
+                                                     # a 60 degree field of view (common in other methods)
 
 
 # Process sample image ---- 
@@ -84,8 +84,8 @@ dev.off()
 # BATCH CODE - variables ----
 # run this before running any of the batch covdes
 
-all.images = list.files("images/field/",pattern = ".JPG")                        # list all images in a directory
-nr.images = length(all.images); nr.images                                       # number of images
+all.images = list.files("images/field/",pattern = ".JPG")       # list all images in a directory
+nr.images = length(all.images); nr.images                       # number of images
 
 
 ## Create data frame to hold all results
@@ -93,18 +93,19 @@ all.data = data.frame(matrix(0, nr.images, 7))
 names(all.data) = c("File", "CanOpen", "LAI",
                     "DirectAbove", "DiffAbove",
                     "DirectBelow", "DiffBelow")
-all.data[,1] = all.images
+all.data[,1] = all.images                                       # puts the file names into the table
 
 
 ## determine in Hemiphot.R and fill in here for batch processing
-location.cr         = 696             # radius of circle as calculated befrore
-location.threshold  = 0.70
+location.cr         = 696             # radius of circle as calculated before
+location.threshold  = 0.70            # the threshold for sky and leaf (0 to 1, higher is darker)
 
 # BATCH CODE - calculate LAI ----
 
+# loops through each image one at a time (i is the iteration)
 for(i in 1:nr.images){  # 1:nr.images = 1 to nr.images (i.e. [1:3, ]) it's just telling it to start at 1 (which I thought it does automatically)                              
   ## read file
-  image = readJPEG(paste("images/field/",all.images[i],sep = ""), native = F)     #if native = T creates a raster, else an array
+  image = readJPEG(paste("images/field/",all.images[i],sep = ""), native = F)     
   
   ## conver to Hemi image
   image = Image2Hemiphot(image)
@@ -117,6 +118,7 @@ for(i in 1:nr.images){  # 1:nr.images = 1 to nr.images (i.e. [1:3, ]) it's just 
   
   #threshold
   image = ThresholdImage(im = image, th = location.threshold, draw.image = F)
+  # draw image is set to F so that it doesn't plot it out (saves time)
   
   # canopy openness
   gap.fractions = CalcGapFractions(image)
@@ -126,6 +128,7 @@ for(i in 1:nr.images){  # 1:nr.images = 1 to nr.images (i.e. [1:3, ]) it's just 
   all.data[i,3] = CalcLAI(fractions = gap.fractions)
 }
 
+# checks the data
 head(all.data) 
 
 # save data
@@ -133,10 +136,12 @@ write.csv(all.data, "output/image-analysis-output.csv")
 
 
 # BATCH GENERATE IMAGES ----
-
+# this loop does the calculations and spits out 2 images (one before and after
+# the thresholding process) to allow the thresholding to be evaluated.
+# you can find the results in "output/thresholds"
 for(i in 1:nr.images){  
   ## read file
-  image_origin = readJPEG(paste("images/field/",all.images[i],sep = ""), native = F)     #if native = T creates a raster, else an array
+  image_origin = readJPEG(paste("images/field/",all.images[i],sep = ""), native = F)     
   
   ## conver to Hemi image
   image = Image2Hemiphot(image_origin)
