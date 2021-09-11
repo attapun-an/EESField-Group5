@@ -52,8 +52,7 @@ Species_Data_1 <- Species_Data %>%
     grepl("P", Group) ~ "Vascular.Plants",
     grepl("L", Group) ~ "Lichens")) %>% 
   select(!Names) %>%
-  drop_na() %>% 
-  group_by(Plot.Number, Group) %>% 
+  drop_na() %>%  # AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH, I forgot to add this and spent 3 hours trying to fix the code :((((((((  group_by(Plot.Number, Group) %>% 
   summarise(n = sum(Presence)) %>% 
   pivot_wider(names_from = Group, values_from = n) %>% 
   relocate(Vascular.Plants, .after = Bryophytes)
