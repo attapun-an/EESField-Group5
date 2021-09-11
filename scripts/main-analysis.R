@@ -52,17 +52,14 @@ Species_Data_1 <- Species_Data %>%
     grepl("P", Group) ~ "Vascular.Plant",
     grepl("L", Group) ~ "Lichen")) %>% 
   select(!Names) %>% 
-  group_by(Plot.Number, Group) %>% 
-  summarise(n = n()) 
+  mutate(Presence = as.logical(Presence)) %>% 
+  group_by(Plot.Number,Group) %>% 
+  summarise_if(isTRUE(Presence)), n()))
 
 
-
-
-  
   
 head(Species_Data_1)
 str(Species_Data_1)
-unique(Species_Data_1$Group)
 
 # combines the two data tables
 Combined_Data <- left_join(Plot_Data_1, Hemi_Data_1, by="File.name")        
