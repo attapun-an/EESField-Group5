@@ -7,6 +7,8 @@ rm(list=ls())  # clear memory
 
 # load libraries ----
 library(dplyr)      # for data manipulation
+library(tidyr)
+library(stringr)
 library(ggplot2)    # to plot data
 library(ggeffects)  # in case we have a mixed effect model? (not used as of now)
 
@@ -14,13 +16,17 @@ library(ggeffects)  # in case we have a mixed effect model? (not used as of now)
 # import data ----
 Hemi_Data <- read.csv("output/image-analysis-output.csv")           # imports data from our LAI calcs
 Plot_Data <- read.csv("data/Metadata.csv")                          # imports data from the field
+Species_Data <- read.csv("data/Modded Understorey diversity counts.csv")
 
 #check data
 head(Hemi_Data)
 str(Hemi_Data)
+
 head(Plot_Data)
 str(Plot_Data)
 
+head(Species_Data)
+str(Species_Data)
 # data cleaning and alignment ----
 
 Hemi_Data_1 <- Hemi_Data %>% 
@@ -36,6 +42,27 @@ Plot_Data_1 <- Plot_Data %>%
     grepl("Sitka", substr(Overstorey.Species,1,5)) ~ "Sitka spruce", 
     grepl("Larch", substr(Overstorey.Species,1,5))~"Larch"))
 
+Species_Data_1 <- Species_Data %>%
+  rename(Plot.Number = X) %>% 
+  pivot_longer(!Plot.Number, names_to = "Names", values_to = "Presence") %>% 
+  mutate(Group = substring(Names,1,1), Species = substring(Names,2)) %>% 
+  mutate(Group = case_when(
+    grepl("B", Group) ~ "Bryophyte",
+    grepl("F", Group) ~ "Fungi",
+    grepl("P", Group) ~ "Vascular.Plant",
+    grepl("L", Group) ~ "Lichen")) %>% 
+  select(!Names) %>% 
+  group_by(Plot.Number, Group) %>% 
+  summarise(n = n()) 
+
+
+
+
+  
+  
+head(Species_Data_1)
+str(Species_Data_1)
+unique(Species_Data_1$Group)
 
 # combines the two data tables
 Combined_Data <- left_join(Plot_Data_1, Hemi_Data_1, by="File.name")        
