@@ -47,20 +47,16 @@ Species_Data_1 <- Species_Data %>%
   pivot_longer(!Plot.Number, names_to = "Names", values_to = "Presence") %>% 
   mutate(Group = substring(Names,1,1), Species = substring(Names,2)) %>% 
   mutate(Group = case_when(
-    grepl("B", Group) ~ "Bryophyte",
+    grepl("B", Group) ~ "Bryophytes",
     grepl("F", Group) ~ "Fungi",
-    grepl("P", Group) ~ "Vascular.Plant",
-    grepl("L", Group) ~ "Lichen")) %>% 
+    grepl("P", Group) ~ "Vascular.Plants",
+    grepl("L", Group) ~ "Lichens")) %>% 
   select(!Names) %>%
   drop_na() %>% 
   group_by(Plot.Number, Group) %>% 
-  summarise(n = sum(Presence))
-
-
-
-  
-
-
+  summarise(n = sum(Presence)) %>% 
+  pivot_wider(names_from = Group, values_from = n) %>% 
+  relocate(Vascular.Plants, .after = Bryophytes)
   
 head(Species_Data_1)
 str(Species_Data_1)
