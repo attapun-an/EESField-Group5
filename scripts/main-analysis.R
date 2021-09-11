@@ -43,16 +43,16 @@ Plot_Data_1 <- Plot_Data %>%
     grepl("Larch", substr(Overstorey.Species,1,5))~"Larch"))
 
 Species_Data_1 <- Species_Data %>%
-  rename(Plot.Number = X) %>% 
-  pivot_longer(!Plot.Number, names_to = "Names", values_to = "Presence") %>% 
-  mutate(Group = substring(Names,1,1), Species = substring(Names,2)) %>% 
-  mutate(Group = case_when(
-    grepl("B", Group) ~ "Bryophytes",
+  rename(Plot.Number = X) %>%                                                      
+  pivot_longer(!Plot.Number, names_to = "Names", values_to = "Presence") %>%    # pivot data into long form
+  mutate(Group = substring(Names,1,1), Species = substring(Names,2)) %>%        # Split Group and Species Name (They were put together in the mod because R can't handle two headers)
+  mutate(Group = case_when(                                                     
+    grepl("B", Group) ~ "Bryophytes",         # restore group names
     grepl("F", Group) ~ "Fungi",
     grepl("P", Group) ~ "Vascular.Plants",
     grepl("L", Group) ~ "Lichens")) %>% 
-  select(!Names) %>%
-  drop_na() %>% 
+  select(!Names) %>%                          # remove the Names column
+  drop_na() %>%                               # remove that Fkin row that took 3 hours being a pain in the a** (it was empty)
   group_by(Plot.Number, Group) %>% 
   summarise(n = sum(Presence)) %>% 
   pivot_wider(names_from = Group, values_from = n) %>% 
