@@ -51,7 +51,9 @@ Species_Data_1 <- Species_Data %>%
     grepl("F", Group) ~ "Fungi",
     grepl("P", Group) ~ "Vascular.Plant",
     grepl("L", Group) ~ "Lichen")) %>% 
-  select(!Names)
+  select(!Names) %>% 
+  group_by(Plot.Number, Group) %>% 
+  summarise(n = sum(Presence))
 
 
 
