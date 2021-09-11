@@ -42,16 +42,20 @@ Combined_Data$Overstorey.Species <- as.factor(Combined_Data$Overstorey.Species)
 str(Combined_Data)
 head(Combined_Data)
 # Model ----
-# Canopy Openness vs. Species Richness
 
+# Canopy Openness vs. Species Richness
 m1 <- lm(formula = Alpha.Diversity ~ CanOpen, data = Combined_Data)
 summary(m1)
 plot(m1) # plot residuals
 
+
+# 
 m2 <- lm(formula = CanOpen ~ Number.of.trees.in.plot, data = Combined_Data)
 summary(m2)
 plot(m2)
 
+
+# VIsualize Data ----
 (CanOpenvsRichness_Plot <- ggplot(Combined_Data, aes(x = CanOpen, y = Alpha.Diversity))+
     geom_point(aes(colour = Overstorey.Species))+
     geom_smooth(method = lm, color = "#A3A1A8")+
@@ -64,3 +68,6 @@ plot(m2)
     theme_bw()
     )
 
+# Save Plots ----
+ggsave("output/plots/plot_CanOpenvsRichness.jpg", CanOpenvsRichness_Plot)
+ggsave("output/plots/plot_StockvsCanOpen.jpg", StockvsCanOpen_Plot)

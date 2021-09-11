@@ -2,6 +2,15 @@
 # Based on HemiphotTest.R Hans ter Steege (2018)
 # attapun-an
 
+# NOTE TO GROUP 5: #############################################
+#
+#
+#
+#
+#
+#
+#
+
 # Working directory is set to root directory (one above the script folder)
 rm(list=ls())  # clear memory
 
