@@ -52,9 +52,8 @@ Species_Data_1 <- Species_Data %>%
     grepl("P", Group) ~ "Vascular.Plant",
     grepl("L", Group) ~ "Lichen")) %>% 
   select(!Names) %>% 
-  mutate(Presence = as.logical(Presence)) %>% 
-  group_by(Plot.Number,Group) %>% 
-  summarise_if(isTRUE(Presence)), n()))
+  pivot_wider(names_from = Plot.Number, values_from = Presence)
+  
 
 
   
