@@ -69,11 +69,19 @@ str(Species_Data_1)
 Combined_Data <- left_join(Plot_Data_1, Hemi_Data_1, by="File.name") 
 Combined_Data <- left_join(Combined_Data, Species_Data_1, by="Plot.Number") %>% 
   relocate(Plot.Number)
-
 Combined_Data$Overstorey.Species <- as.factor(Combined_Data$Overstorey.Species) # changes data type of Overstorey.species to a factor 
 
 str(Combined_Data)
 head(Combined_Data)
+
+SpeciesSplit_Data <- Combined_Data %>% 
+  select(CanOpen, LAI, Bryophytes, Vascular.Plants, Fungi, Lichens) %>% 
+  pivot_longer(-c(CanOpen, LAI), names_to = "Group", values_to = "Count")
+
+SpeciesSplit_Data_2
+
+head(SpeciesSplit_Data)
+
 # Model ----
 
 # Canopy Openness vs. Species Richness
@@ -102,13 +110,24 @@ plot(m2)
     theme_bw()
     )
 
-# this is still under development
-(CanOpenvsRichness_Plot <- ggplot(Combined_Data, aes(x = ConOpen, y = Alpha.Diversity))+
-    geom_point(aes(colour = Overstorey.Species))+
-    geom_smooth(method = MASS::rlm, aes(fill =))
-    ) 
+# set colours:
+Cols_Grp <- c("#B7F500", "#E09800", "#00E097", "#FA2100")
+
+CanOpenvsCount_Plot <- ggplot(SpeciesSplit_Data, aes(x = CanOpen, y = Count))+
+  geom_point(aes(colour = Group))+
+  geom_smooth(method = MASS::rlm, aes(fill = Group, colour = Group))+
+  scale_colour_manual(values = Cols_Grp) +
+  scale_fill_manual(values = Cols_Grp) +
+  theme_bw();CanOpenvsCount_Plot
+
+
+# Violin Plot In Progress
+CanOpenvsCount_Plot_Violin <- ggplot(Species_Data_1, aes(x = Group, y = Count))+
+  geom_violin()+
+  theme_bw();CanOpenvsCount_Plot_Violin
+
 
 # Save Plots ----
 ggsave("output/plots/plot_CanOpenvsRichness.jpg", CanOpenvsRichness_Plot)
 ggsave("output/plots/plot_StockvsCanOpen.jpg", StockvsCanOpen_Plot)
-
+ggsave("output/plots/plot_CanOpenvsCount.jpg", CanOpenvsCount_Plot)
