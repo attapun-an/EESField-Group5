@@ -11,7 +11,7 @@ library(tidyr)
 library(stringr)
 library(ggplot2)    # to plot data
 library(ggeffects)  # in case we have a mixed effect model? (not used as of now)
-
+library(MASS)       # to run robust linear models
 
 # import data ----
 Hemi_Data <- read.csv("output/image-analysis-output.csv")           # imports data from our LAI calcs
@@ -78,23 +78,28 @@ SpeciesSplit_Data <- Combined_Data %>%
   select(CanOpen, LAI, Bryophytes, Vascular.Plants, Fungi, Lichens) %>% 
   pivot_longer(-c(CanOpen, LAI), names_to = "Group", values_to = "Count")
 
-SpeciesSplit_Data_2
-
 head(SpeciesSplit_Data)
 
 # Model ----
 
 # Canopy Openness vs. Species Richness
 # note (dependent ~ Independent)
-m1 <- lm(formula = Alpha.Diversity ~ CanOpen, data = Combined_Data)
+m1 <- rlm(formula = Alpha.Diversity ~ CanOpen, data = Combined_Data)
 summary(m1)
 plot(m1) # plot residuals
 
+m1_weights <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = m1$residuals,
+                         Weight = m1$w) %>% 
+  arrange(Weight);m1_weights
 
 # 
-m2 <- lm(formula = CanOpen ~ Number.of.trees.in.plot, data = Combined_Data)
+m2 <- rlm(formula = CanOpen ~ Number.of.trees.in.plot, data = Combined_Data)
 summary(m2)
 plot(m2)
+
+m2_weights <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = m2$residuals,
+                         Weight = m2$w) %>% 
+  arrange(Weight); m2_weights
 
 
 # VIsualize Data ----
