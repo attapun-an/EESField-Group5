@@ -35,12 +35,16 @@ Hemi_Data_1 <- Hemi_Data %>%
                                        # common that can be used to join them 
                                        
 Plot_Data_1 <- Plot_Data %>%
-  select(Overstorey.Species, Number.of.trees.in.plot, File.name, Alpha.Diversity) %>%    # remove unwanted rows
-  mutate(File.name = paste("EE5_",File.name,".JPG", sep = "")) %>%                       # file number to file name so both are the same, helps with joining
+  select(Site.number, Overstorey.Species, Number.of.trees.in.plot, File.name, Alpha.Diversity) %>%    # remove unwanted rows
+  mutate(File.name = paste("EE5_",File.name,".JPG", sep = ""),         # file number to file name so both are the same, helps with joining
+         Plot.Number = Site.number) %>%                                #
+  select(!Site.number) %>%                                             # remove Site.number
   mutate(Overstorey.Species = case_when(                               # creates 3 categories for dominant vegetation
     grepl("Scots", substr(Overstorey.Species,1,5)) ~ "Scots pine",     
     grepl("Sitka", substr(Overstorey.Species,1,5)) ~ "Sitka spruce", 
     grepl("Larch", substr(Overstorey.Species,1,5))~"Larch"))
+
+str(Plot_Data_1)
 
 Species_Data_1 <- Species_Data %>%
   rename(Plot.Number = X) %>%                                                      
@@ -53,16 +57,19 @@ Species_Data_1 <- Species_Data %>%
     grepl("L", Group) ~ "Lichens")) %>% 
   select(!Names) %>%                          # remove the Names column
   drop_na() %>%                               # remove that Fkin row that took 3 hours being a pain in the a** (it was empty)
-  group_by(Plot.Number, Group) %>% 
-  summarise(n = sum(Presence)) %>% 
+  group_by(Plot.Number, Group) %>%            
+  summarise(n = sum(Presence)) %>%              
   pivot_wider(names_from = Group, values_from = n) %>% 
   relocate(Vascular.Plants, .after = Bryophytes)
   
 head(Species_Data_1)
 str(Species_Data_1)
 
-# combines the two data tables
-Combined_Data <- left_join(Plot_Data_1, Hemi_Data_1, by="File.name")        
+# combines the three data tables
+Combined_Data <- left_join(Plot_Data_1, Hemi_Data_1, by="File.name") 
+Combined_Data <- left_join(Combined_Data, Species_Data_1, by="Plot.Number") %>% 
+  relocate(Plot.Number)
+
 Combined_Data$Overstorey.Species <- as.factor(Combined_Data$Overstorey.Species) # changes data type of Overstorey.species to a factor 
 
 str(Combined_Data)
@@ -94,6 +101,12 @@ plot(m2)
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
     theme_bw()
     )
+
+# this is still under development
+(CanOpenvsRichness_Plot <- ggplot(Combined_Data, aes(x = ConOpen, y = Alpha.Diversity))+
+    geom_point(aes(colour = Overstorey.Species))+
+    geom_smooth(method = MASS::rlm, aes(fill =))
+    ) 
 
 # Save Plots ----
 ggsave("output/plots/plot_CanOpenvsRichness.jpg", CanOpenvsRichness_Plot)
