@@ -126,12 +126,6 @@ CanOpenvsCount_Plot <- ggplot(SpeciesSplit_Data, aes(x = CanOpen, y = Count))+
   theme_bw();CanOpenvsCount_Plot
 
 
-# Violin Plot In Progress
-CanOpenvsCount_Plot_Violin <- ggplot(Species_Data_1, aes(x = Group, y = Count))+
-  geom_violin()+
-  theme_bw();CanOpenvsCount_Plot_Violin
-
-
 # Save Plots ----
 ggsave("output/plots/plot_CanOpenvsRichness.jpg", CanOpenvsRichness_Plot)
 ggsave("output/plots/plot_StockvsCanOpen.jpg", StockvsCanOpen_Plot)
