@@ -1,0 +1,27 @@
+
+Multiple Regression With All Predictor Variables vs Alpha Diversity
+===============================================
+                        Dependent variable:    
+                    ---------------------------
+                          Alpha.Diversity      
+-----------------------------------------------
+CanOpen                      17.606***         
+                             p = 0.002         
+                                               
+Stem.Count                    -0.028           
+                             p = 0.547         
+                                               
+Soil.Moisture.Mean            -0.007           
+                             p = 0.855         
+                                               
+Constant                       0.665           
+                             p = 0.837         
+                                               
+-----------------------------------------------
+Observations                    25             
+R2                             0.541           
+Adjusted R2                    0.476           
+Residual Std. Error       2.686 (df = 21)      
+F Statistic            8.258*** (df = 3; 21)   
+===============================================
+Note:               *p<0.1; **p<0.05; ***p<0.01

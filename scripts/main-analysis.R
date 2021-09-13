@@ -12,6 +12,7 @@ install.packages("stringr")
 install.packages("ggplot2")
 install.packages("MASS")
 install.packages("sfsmisc")
+install.packages("stargazer")
 
 # load libraries ----
 library(dplyr)      # for data manipulation
@@ -21,6 +22,7 @@ library(ggplot2)    # to plot data
 library(ggeffects)  # in case we have a mixed effect model? (not used as of now)
 library(MASS)       # to run robust linear models
 library(sfsmisc)
+library(stargazer)
 
 # import data ----
 Hemi_Data <- read.csv("output/image-analysis-output.csv")           # imports data from our LAI calcs
@@ -46,7 +48,6 @@ Hemi_Data_1 <- Hemi_Data %>%
 Plot_Data_1 <- Plot_Data %>%
   mutate(File_name = paste("EE5_",File_name,".JPG", sep = ""),         # file number to file name so both are the same, helps with joining
          Plot_number = Plot_number) %>%                                #
-  # dplyr::select(!Plot_number) %>%                                             # remove Site.number
   mutate(Overstorey_Species = case_when(                               # creates 3 categories for dominant vegetation
     grepl("Scots", substr(Overstorey_Species,1,5)) ~ "Scots pine",     
     grepl("Sitka", substr(Overstorey_Species,1,5)) ~ "Sitka spruce", 
@@ -69,7 +70,7 @@ Species_Data_1 <- Species_Data %>%
     grepl("P", Group) ~ "Vascular.Plants",
     grepl("L", Group) ~ "Lichens")) %>% 
   dplyr::select(!Names) %>%                          # remove the Names column
-  drop_na() %>%                               # remove that Fkin row that took 3 hours being a pain in the a** (it was empty)
+  drop_na() %>%                                      # remove that Fkin row that took 3 hours being a pain in the a** (it was empty)
   group_by(Plot.Number, Group) %>%            
   summarise(n = sum(Presence)) %>%              
   pivot_wider(names_from = Group, values_from = n) %>% 
@@ -94,13 +95,30 @@ SpeciesSplit_Data <- Combined_Data %>%
 head(SpeciesSplit_Data)
 
 # Check the normality of the data ----
+(hist <- ggplot(Combined_Data, aes(x = Alpha.Diversity)) +
+   geom_histogram() +
+   theme_bw())
+shapiro.test(Combined_Data$Alpha.Diversity)
 
+
+(hist <- ggplot(Combined_Data, aes(x = CanOpen)) +
+    geom_histogram() +
+    theme_classic())
+shapiro.test(Combined_Data$CanOpen)
+
+(hist <- ggplot(Combined_Data, aes(x = Stem.Count)) +
+    geom_histogram() +
+    theme_classic())
+shapiro.test(Combined_Data$CanOpen)
 
 # Model ----
 
 # PLUG IT ALL IN AHAHAHHAHAHAHHAHA (to check which factor is the most effect argh english.exe crashed)
-modl_ALL <- lm(formula = Alpha.Diversity ~ CanOpen + )
-
+modl_ALL <- lm(formula = Alpha.Diversity ~ CanOpen + Stem.Count + Soil.Moisture.Mean, data = Combined_Data)
+summary(modl_ALL)
+stargazer(modl_ALL, out = "output/main_analysis/Modl_ALL.txt",
+          title = "Multiple Regression With All Predictor Variables vs Alpha Diversity" , 
+          type = "text", report=("vc*p"))
 # Canopy Openness vs. Species Richness
 # note (dependent ~ Independent)
 modl_CanOpen <- lm(formula = Alpha.Diversity ~ CanOpen, data = Combined_Data)
@@ -111,6 +129,8 @@ f.robftest(modl_CanOpen)
 weights_CanOpen <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = modl_CanOpen$residuals,
                          Weight = modl_CanOpen$w) %>% 
   arrange(Weight);weights_CanOpen
+
+stargazer()
 
 # Model Canopy openess vs Stem Count
 modl_Stem <- rlm(formula = CanOpen ~ Stem.Count, data = Combined_Data)
@@ -178,8 +198,15 @@ CanOpenvsCount_Plot <- ggplot(SpeciesSplit_Data, aes(x = CanOpen, y = Count))+
 
 
 # Save Plots ----
-ggsave("output/plots/plot_CanOpenvsRichness.jpg", CanOpenvsRichness_Plot)
-ggsave("output/plots/plot_StockvsCanOpen.jpg", StockvsCanOpen_Plot)
-ggsave("output/plots/plot_CanOpenvsCount.jpg", CanOpenvsCount_Plot)
-ggsave("output/plots/plot_pHvsRichness.jpg", pHvsRichness_Plot)
-ggsave("output/plots/plot_SoilMoisturevsAbundance.jpg", SoilMoisturevsRichness_Plot)
+Width <- 1920
+Height <- 1350 
+Folder <- "output/main_analysis"
+Format <- "jpeg"
+
+
+
+ggsave("output/main_analysis/plt_CanOpen.jpg",CanOpenvsRichness_Plot, width = 8.2, height = 5.16, units = "in")
+ggsave("output/main_analysis/plt_StockvsCanOpen.jpg", StockvsCanOpen_Plot, width = 8.2, height = 5.16, units = "in")
+ggsave("output/main_analysi/plt_CanOpen_strat.jpg", CanOpenvsCount_Plot, width = 8.2, height = 5.16, units = "in")
+ggsave("output/main_analysi/plt_pH.jpg", pHvsRichness_Plot, width = 8.2, height = 5.16, units = "in")
+ggsave("output/main_analysi/plt_SoilMoist.jpg", SoilMoisturevsRichness_Plot, width = 8.2, height = 5.16, units = "in")
