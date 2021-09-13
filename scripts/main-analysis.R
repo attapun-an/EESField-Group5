@@ -159,6 +159,9 @@ f.robftest(modl_SM)
 
 
 # Visualize Data ----
+
+
+# CanOpen
 (CanOpenvsRichness_Plot <- ggplot(Combined_Data, aes(x = CanOpen, y = Alpha.Diversity))+
     geom_point(aes(colour = Overstorey.Species))+
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
@@ -186,7 +189,7 @@ f.robftest(modl_SM)
 # set colours:
 Cols_Grp <- c("#B7F500", "#E09800", "#00E097", "#FA2100")
 
-CanOpenvsCount_Plot <- ggplot(SpeciesSplit_Data, aes(x = CanOpen, y = Count))+
+(CanOpenvsCount_Plot <- ggplot(SpeciesSplit_Data, aes(x = CanOpen, y = Count))+
   geom_point(aes(colour = Group))+
   coord_cartesian(ylim=c(0,9)) +
   scale_x_continuous(expand = c(0, 0)) +
@@ -194,19 +197,12 @@ CanOpenvsCount_Plot <- ggplot(SpeciesSplit_Data, aes(x = CanOpen, y = Count))+
   geom_smooth(method = MASS::rlm, aes(fill = Group, colour = Group))+
   scale_colour_manual(values = Cols_Grp) +
   scale_fill_manual(values = Cols_Grp) +
-  theme_bw();CanOpenvsCount_Plot
+  theme_bw())
 
 
 # Save Plots ----
-Width <- 1920
-Height <- 1350 
-Folder <- "output/main_analysis"
-Format <- "jpeg"
-
-
-
 ggsave("output/main_analysis/plt_CanOpen.jpg",CanOpenvsRichness_Plot, width = 8.2, height = 5.16, units = "in")
 ggsave("output/main_analysis/plt_StockvsCanOpen.jpg", StockvsCanOpen_Plot, width = 8.2, height = 5.16, units = "in")
-ggsave("output/main_analysi/plt_CanOpen_strat.jpg", CanOpenvsCount_Plot, width = 8.2, height = 5.16, units = "in")
-ggsave("output/main_analysi/plt_pH.jpg", pHvsRichness_Plot, width = 8.2, height = 5.16, units = "in")
-ggsave("output/main_analysi/plt_SoilMoist.jpg", SoilMoisturevsRichness_Plot, width = 8.2, height = 5.16, units = "in")
+ggsave("output/main_analysis/plt_CanOpen_strat.jpg", CanOpenvsCount_Plot, width = 8.2, height = 5.16, units = "in")
+ggsave("output/main_analysis/plt_pH.jpg", pHvsRichness_Plot, width = 8.2, height = 5.16, units = "in")
+ggsave("output/main_analysis/plt_SoilMoist.jpg", SoilMoisturevsRichness_Plot, width = 8.2, height = 5.16, units = "in")
