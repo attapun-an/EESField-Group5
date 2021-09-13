@@ -23,6 +23,7 @@ library(ggeffects)  # in case we have a mixed effect model? (not used as of now)
 library(MASS)       # to run robust linear models
 library(sfsmisc)
 library(stargazer)
+library(lme4)
 
 # import data ----
 Hemi_Data <- read.csv("output/image-analysis-output.csv")           # imports data from our LAI calcs
@@ -85,6 +86,7 @@ Combined_Data <- left_join(Combined_Data, Species_Data_1, by="Plot.Number") %>%
          Stocking.Density = Stem.Count/(pi*100))
 
 Combined_Data$Overstorey.Species <- as.factor(Combined_Data$Overstorey.Species) # changes data type of Overstorey.species to a factor 
+Combined_Data$Transect <- as.factor(Combined_Data$Transect)
 
 str(Combined_Data)
 head(Combined_Data)
@@ -120,6 +122,13 @@ summary(modl_ALL)
 stargazer(modl_ALL, out = "output/main_analysis/Modl_ALL.txt",
           title = "Multiple Regression With All Predictor Variables vs Alpha Diversity" , 
           type = "text", report=("vc*p"))
+
+# MIXED EFFECTS MODEL
+modl_ALL_MIXED <- lmer(formula = Alpha.Diversity ~ CanOpen +Stem.Count + Soil.Moisture.Mean + pH.Readings + (1|Transect), 
+                       data = Combined_Data)
+summary(modl_ALL_MIXED)
+
+
 # Canopy Openness vs. Species Richness
 # note (dependent ~ Independent)
 modl_CanOpen <- lm(formula = Alpha.Diversity ~ CanOpen, data = Combined_Data)
@@ -131,10 +140,9 @@ weights_CanOpen <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals
                          Weight = modl_CanOpen$w) %>% 
   arrange(Weight);weights_CanOpen
 
-stargazer()
 
 # Model Canopy openess vs Stem Count
-modl_Stem <- rlm(formula = CanOpen ~ Stem.Count, data = Combined_Data)
+modl_Stem <- lm(formula = CanOpen ~ Stocking.Density, data = Combined_Data)
 summary(modl_Stem)
 plot(modl_Stem)
 f.robftest(modl_Stem)
@@ -153,10 +161,12 @@ f.robftest(modl_pH)
 
 
 # Model Soil Moisture vs Richness
-modl_SM <- rlm(formula = Alpha.Diversity ~ Soil.Moisture.Mean, data = Combined_Data)
+modl_SM <- lm(formula = Alpha.Diversity ~ Soil.Moisture.Mean, data = Combined_Data)
 summary(modl_SM)
 plot(modl_SM)
 f.robftest(modl_SM)
+
+
 
 
 # Visualize Data ----
