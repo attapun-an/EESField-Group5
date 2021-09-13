@@ -81,7 +81,8 @@ Combined_Data <- left_join(Plot_Data_1, Hemi_Data_1, by="File.Name")
 Combined_Data <- left_join(Combined_Data, Species_Data_1, by="Plot.Number") %>% 
   relocate(Plot.Number) %>% 
   mutate(Alpha.Diversity = Bryophytes + Vascular.Plants + Fungi + Lichens, 
-         Soil.Moisture.Mean = (Soil.Moisture_1 + Soil.Moisture_2 + Soil.Moisture_3 + Soil.Moisture_4)/4)
+         Soil.Moisture.Mean = (Soil.Moisture_1 + Soil.Moisture_2 + Soil.Moisture_3 + Soil.Moisture_4)/4,
+         Stocking.Density = Stem.Count/(pi*100))
 
 Combined_Data$Overstorey.Species <- as.factor(Combined_Data$Overstorey.Species) # changes data type of Overstorey.species to a factor 
 
@@ -161,30 +162,51 @@ f.robftest(modl_SM)
 # Visualize Data ----
 
 
+
 # CanOpen
 (CanOpenvsRichness_Plot <- ggplot(Combined_Data, aes(x = CanOpen, y = Alpha.Diversity))+
     geom_point(aes(colour = Overstorey.Species))+
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
-    theme_bw()
-    )
+    xlab("\n Canopy Openess")+
+    ylab("Understory Species Richness \n")+
+    labs(colour = "Overstorey Species")+
+    scale_colour_manual(values = c("#45FB93", "#BC49FF", "#E0765A"))+
+    scale_fill_manual(values =c("#BAF3D2")) +
+    theme_bw()+
+    theme(axis.title = element_text(size=12))
+ )
+ggsave("output/main_analysis/plt_CanOpen.jpg",CanOpenvsRichness_Plot, width = 8.2, height = 5.16, units = "in")
 
-(StockvsCanOpen_Plot <- ggplot(Combined_Data, aes(x = Stem.Count, y = CanOpen))+
+# Stem vs CanOpen
+(StockvsCanOpen_Plot <- ggplot(Combined_Data, aes(x = Stocking.Density, y = CanOpen))+
     geom_point(aes(colour = Overstorey.Species))+
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
-    theme_bw()
+    scale_colour_manual(values = c("#45FB93", "#BC49FF", "#E0765A"))+
+    theme_bw()+
+    theme(axis.title = element_text(size=12))
     )
+ggsave("output/main_analysis/plt_StockvsCanOpen.jpg", StockvsCanOpen_Plot, width = 8.2, height = 5.16, units = "in")
+
 
 (pHvsRichness_Plot <- ggplot(Combined_Data, aes(x = pH.Readings, y = Alpha.Diversity))+
     geom_point(aes(colour = Overstorey.Species))+
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
-    theme_bw()
+    theme_bw()+
+    theme(axis.title = element_text(size=12))
 )
+ggsave("output/main_analysis/plt_pH.jpg", pHvsRichness_Plot, width = 8.2, height = 5.16, units = "in")
+
 
 (SoilMoisturevsRichness_Plot <- ggplot(Combined_Data, aes(x = Soil.Moisture.Mean, y = Alpha.Diversity))+
     geom_point(aes(colour = Overstorey.Species))+
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
-    theme_bw()
+    theme_bw()+
+    theme(axis.title = element_text(size=12))
 )
+ggsave("output/main_analysis/plt_SoilMoist.jpg", SoilMoisturevsRichness_Plot, width = 8.2, height = 5.16, units = "in")
+
 
 # set colours:
 Cols_Grp <- c("#B7F500", "#E09800", "#00E097", "#FA2100")
@@ -197,12 +219,9 @@ Cols_Grp <- c("#B7F500", "#E09800", "#00E097", "#FA2100")
   geom_smooth(method = MASS::rlm, aes(fill = Group, colour = Group))+
   scale_colour_manual(values = Cols_Grp) +
   scale_fill_manual(values = Cols_Grp) +
-  theme_bw())
-
-
-# Save Plots ----
-ggsave("output/main_analysis/plt_CanOpen.jpg",CanOpenvsRichness_Plot, width = 8.2, height = 5.16, units = "in")
-ggsave("output/main_analysis/plt_StockvsCanOpen.jpg", StockvsCanOpen_Plot, width = 8.2, height = 5.16, units = "in")
-ggsave("output/main_analysis/plt_CanOpen_strat.jpg", CanOpenvsCount_Plot, width = 8.2, height = 5.16, units = "in")
-ggsave("output/main_analysis/plt_pH.jpg", pHvsRichness_Plot, width = 8.2, height = 5.16, units = "in")
-ggsave("output/main_analysis/plt_SoilMoist.jpg", SoilMoisturevsRichness_Plot, width = 8.2, height = 5.16, units = "in")
+  xlab("\n Canopy Openess")+
+  ylab("Count \n")+
+  theme_bw()+
+  theme(axis.title = element_text(size=12))
+)
+ggsave("output/main_analysis/plt_CanOpen_split.jpg", CanOpenvsCount_Plot, width = 8.2, height = 5.16, units = "in")
