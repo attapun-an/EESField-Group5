@@ -103,8 +103,8 @@ m1_weights <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = m1
                          Weight = m1$w) %>% 
   arrange(Weight);m1_weights
 
-# 
-m2 <- rlm(formula = CanOpen ~ Number.of.trees.in.plot, data = Combined_Data)
+
+m2 <- rlm(formula = CanOpen ~ Stem.Count, data = Combined_Data)
 summary(m2)
 plot(m2)
 
