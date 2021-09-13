@@ -6,13 +6,13 @@ Plot_number,Grid_ref.,LUX,Overstorey_Species,Weather,Stems_in_10m_radius_circula
 5,NM 851 262,65.9,Sitka spruce,"Raining, overcast",63,2915,0,4.5,5,22.4,52,26.6,31
 6,NM 850 264,169.3,Larch,Lightly raining,27,2918,0,5.5,6,11.3,42.3,84.3,37
 7,NM 850 263,270,Larch,Lightly raining,30,2919,0,5.5,7,20.6,21.5,14.2,20.8
-8,NM 850 264,1430,Scots pine with Sitka either side,Lightly raining,21,2920,0,5,8,66.8,53.7,64.2,>85
-9,NM 850 264,1618,Sitka spruce and scots pine,Lightly raining,33,2921,0,5.5,9,>85,>85,>85,>85
-10,NM 850 264,1756,Sitka spruce and scots pine,Overcast but dry,14,2923,0,4.5,10,>85,52.2,>85,>85
-11,NM 849 264,20200,Scotspine with Larch and scots pine either side. Rowan trees also directly East.,Overcast but dry,42,2926,0,4,11,60,65.4,>85,>85
+8,NM 850 264,1430,Scots pine with Sitka either side,Lightly raining,21,2920,0,5,8,66.8,53.7,64.2,85
+9,NM 850 264,1618,Sitka spruce and scots pine,Lightly raining,33,2921,0,5.5,9,85,85,85,85
+10,NM 850 264,1756,Sitka spruce and scots pine,Overcast but dry,14,2923,0,4.5,10,85,52.2,85,85
+11,NM 849 264,20200,Scotspine with Larch and scots pine either side. Rowan trees also directly East.,Overcast but dry,42,2926,0,4,11,60,65.4,85,85
 12,NM 850 264,88.1,Sitka spruce,Overcast but dry,52,2928,0,5,12,19.2,6.4,30.8,47.9
 13,NM 850 264,276,Sitka spruce,Overcast but dry,48,2930,0,4.5,13,24.9,52.4,65.5,14.1
-14,NM 850 264,1950,Sitka spruce,Overcast but dry,42,2931,0,5,14,51.7,>85,>85,>85
+14,NM 850 264,1950,Sitka spruce,Overcast but dry,42,2931,0,5,14,51.7,85,85,85
 15,NM 849 264,187,Sitka spruce,Overcast but dry,33,2932,0,4.5,15,18.5,52.6,27,47
 16,NM 849 264,282,Sitka spruce,Overcast but dry,35,2933,0,4.5,16,23.9,20,35.9,29.6
 17,NM 849 264,39.8,Sitka spruce,Overcast but dry,63,2934,0,4.5,17,18.7,20.7,18.4,12

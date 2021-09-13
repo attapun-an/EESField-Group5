@@ -77,7 +77,9 @@ Species_Data_1 <- Species_Data %>%
 Combined_Data <- left_join(Plot_Data_1, Hemi_Data_1, by="File.Name") 
 Combined_Data <- left_join(Combined_Data, Species_Data_1, by="Plot.Number") %>% 
   relocate(Plot.Number) %>% 
-  mutate(Alpha.Diversity = Bryophytes + Vascular.Plants + Fungi + Lichens)
+  mutate(Alpha.Diversity = Bryophytes + Vascular.Plants + Fungi + Lichens, 
+         Soil.Moisture.Mean = (Soil.Moisture_1 + Soil.Moisture_2 + Soil.Moisture_3 + Soil.Moisture_4)/4)
+
 Combined_Data$Overstorey.Species <- as.factor(Combined_Data$Overstorey.Species) # changes data type of Overstorey.species to a factor 
 
 str(Combined_Data)
@@ -130,6 +132,12 @@ m2_weights <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = m2
     theme_bw()
 )
 
+(SoilMoisturevsRichness_Plot <- ggplot(Combined_Data, aes(x = Soil.Moisture.Mean, y = Alpha.Diversity))+
+    geom_point(aes(colour = Overstorey.Species))+
+    geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
+    theme_bw()
+)
+
 # set colours:
 Cols_Grp <- c("#B7F500", "#E09800", "#00E097", "#FA2100")
 
@@ -149,3 +157,4 @@ ggsave("output/plots/plot_CanOpenvsRichness.jpg", CanOpenvsRichness_Plot)
 ggsave("output/plots/plot_StockvsCanOpen.jpg", StockvsCanOpen_Plot)
 ggsave("output/plots/plot_CanOpenvsCount.jpg", CanOpenvsCount_Plot)
 ggsave("output/plots/plot_pHvsRichness.jpg", pHvsRichness_Plot)
+ggsave("output/plots/plot_SoilMoisturevsAbundance.jpg", SoilMoisturevsRichness_Plot)
