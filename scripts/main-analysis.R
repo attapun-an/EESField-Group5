@@ -77,7 +77,7 @@ Species_Data_1 <- Species_Data %>%
   summarise(n = sum(Presence)) %>%              
   pivot_wider(names_from = Group, values_from = n) %>% 
   relocate(Vascular.Plants, .after = Bryophytes)
-  
+
 # combines the three data tables
 Combined_Data <- left_join(Plot_Data_1, Hemi_Data_1, by="File.Name") 
 Combined_Data <- left_join(Combined_Data, Species_Data_1, by="Plot.Number") %>% 
@@ -91,6 +91,7 @@ Combined_Data$Transect <- as.factor(Combined_Data$Transect)
 
 str(Combined_Data)
 head(Combined_Data)
+write.csv(Combined_Data, "output/main_analysis/Combined_Data.csv")
 
 SpeciesSplit_Data <- Combined_Data %>% 
   dplyr::select(CanOpen, LAI, Bryophytes, Vascular.Plants, Fungi, Lichens) %>% 
@@ -99,23 +100,28 @@ SpeciesSplit_Data <- Combined_Data %>%
 head(SpeciesSplit_Data)
 
 # Check the normality of the data ----
+# Alpha Diversity
 (hist <- ggplot(Combined_Data, aes(x = Alpha.Diversity)) +
    geom_histogram() +
    theme_bw())
-shapiro.test(Combined_Data$Alpha.Diversity)
+# normality test (<0.05 = higher chance data not normal)
+shapiro.test(Combined_Data$Alpha.Diversity)  
+# bi-modal
 
 
+# Canopy openness
 (hist <- ggplot(Combined_Data, aes(x = CanOpen)) +
     geom_histogram() +
     theme_classic())
 shapiro.test(Combined_Data$CanOpen)
 
+# Stem count
 (hist <- ggplot(Combined_Data, aes(x = Stem.Count)) +
     geom_histogram() +
     theme_classic())
 shapiro.test(Combined_Data$CanOpen)
 
-# Model ----
+# Models ----
 
 # PLUG IT ALL IN AHAHAHHAHAHAHHAHA (to check which factor is the most effect argh english.exe crashed)
 modl_ALL <- lm(formula = Alpha.Diversity ~ CanOpen + Stem.Count + Soil.Moisture.Mean, data = Combined_Data)
@@ -124,10 +130,11 @@ stargazer(modl_ALL, out = "output/main_analysis/Modl_ALL.txt",
           title = "Multiple Regression With All Predictor Variables vs Alpha Diversity" , 
           type = "text", report=("vc*p"))
 
-# MIXED EFFECTS MODEL
+# MIXED EFFECTS MODEL (to check for spatial auto correlation within transects)
 modl_ALL_MIXED <- lmer(formula = Alpha.Diversity ~ CanOpen +Stem.Count + Soil.Moisture.Mean + pH.Readings + (1|Transect), 
                        data = Combined_Data)
 summary(modl_ALL_MIXED)
+# Yay, the transect is not responsible for any varience 
 
 
 # Canopy Openness vs. Species Richness
@@ -136,20 +143,25 @@ modl_CanOpen <- lm(formula = Alpha.Diversity ~ CanOpen, data = Combined_Data)
 summary(modl_CanOpen)
 plot(modl_CanOpen) # plot residuals
 f.robftest(modl_CanOpen)
+stargazer(modl_CanOpen, out = "output/main_analysis/Modl_CanOpen.txt",
+          type = "text", report=("vc*p"))
 
 weights_CanOpen <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = modl_CanOpen$residuals,
                          Weight = modl_CanOpen$w) %>% 
   arrange(Weight);weights_CanOpen
 
 
-# Model Canopy openess vs Stem Count
-modl_Stem <- lm(formula = CanOpen ~ Stocking.Density, data = Combined_Data)
-summary(modl_Stem)
-plot(modl_Stem)
-f.robftest(modl_Stem)
+# Model Canopy openess vs Stocking Density
+modl_StkDen <- lm(formula = CanOpen ~ Stocking.Density, data = Combined_Data)
+summary(modl_StkDen)
+plot(modl_StkDen)
+f.robftest(modl_StkDen)
+stargazer(modl_StkDen, out = "output/main_analysis/modl_StkDen.txt",
+          title = "Canopy Openness VS Stem Count",
+          type = "text", report=("vc*p"))
 
-m2_weights <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = modl_Stem$residuals,
-                         Weight = modl_Stem$w) %>% 
+m2_weights <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = modl_StkDns$residuals,
+                         Weight = modl_StkDns$w) %>% 
   arrange(Weight); m2_weights
 
 
@@ -159,6 +171,8 @@ modl_pH <- rlm(formula = Alpha.Diversity ~ pH.Readings, data = Combined_Data)
 summary(modl_pH)
 plot(modl_pH)
 f.robftest(modl_pH)
+stargazer(modl_pH, out = "output/main_analysis/Modl_pH.txt",
+          type = "text", report=("vc*p"))
 
 
 # Model Soil Moisture vs Richness
@@ -166,8 +180,29 @@ modl_SM <- lm(formula = Alpha.Diversity ~ Soil.Moisture.Mean, data = Combined_Da
 summary(modl_SM)
 plot(modl_SM)
 f.robftest(modl_SM)
+stargazer(modl_SM, out = "output/main_analysis/Modl_SM.txt",
+          type = "text", report=("vc*p"))
 
+modl_Bryo <- lm(formula = Bryophytes ~ CanOpen, data = Combined_Data)
+summary(modl_Bryo)
+plot(modl_Bryo)
+f.robftest(modl_Bryo)
+stargazer(modl_Bryo, out = "output/main_analysis/Modl_Split_Bryo.txt",
+          type = "text", report=("vc*p"))
 
+modl_Vasc <- lm(formula = Vascular.Plants ~ CanOpen, data = Combined_Data)
+summary(modl_Vasc)
+plot(modl_Vasc)
+f.robftest(modl_Vasc)
+stargazer(modl_Vasc, out = "output/main_analysis/Modl_Split_Vasc.txt",
+          type = "text", report=("vc*p"))
+
+modl_Fung <- lm(formula = Fungi ~ CanOpen, data = Combined_Data)
+summary(modl_Fung)
+plot(modl_Fung)
+f.robftest(modl_Fung)
+stargazer(modl_Fung, out = "output/main_analysis/Modl_Split_Fung.txt",
+          type = "text", report=("vc*p"))
 
 
 # Visualize Data ----
