@@ -93,46 +93,52 @@ SpeciesSplit_Data <- Combined_Data %>%
 
 head(SpeciesSplit_Data)
 
+# Check the normality of the data ----
+
+
 # Model ----
+
+# PLUG IT ALL IN AHAHAHHAHAHAHHAHA (to check which factor is the most effect argh english.exe crashed)
+modl_ALL <- lm(formula = Alpha.Diversity ~ CanOpen + )
 
 # Canopy Openness vs. Species Richness
 # note (dependent ~ Independent)
-modl_CanOpen <- rlm(formula = Alpha.Diversity ~ CanOpen, data = Combined_Data)
+modl_CanOpen <- lm(formula = Alpha.Diversity ~ CanOpen, data = Combined_Data)
 summary(modl_CanOpen)
 plot(modl_CanOpen) # plot residuals
 f.robftest(modl_CanOpen)
 
 weights_CanOpen <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = modl_CanOpen$residuals,
-                         Weight = m1$w) %>% 
-  arrange(Weight);m1_weights
+                         Weight = modl_CanOpen$w) %>% 
+  arrange(Weight);weights_CanOpen
 
-
+# Model Canopy openess vs Stem Count
 modl_Stem <- rlm(formula = CanOpen ~ Stem.Count, data = Combined_Data)
 summary(modl_Stem)
 plot(modl_Stem)
 f.robftest(modl_Stem)
 
-m2_weights <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = m2$residuals,
-                         Weight = m2$w) %>% 
+m2_weights <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = modl_Stem$residuals,
+                         Weight = modl_Stem$w) %>% 
   arrange(Weight); m2_weights
 
+
+# Model pH vs Richness
+modl_pH <- lm(formula = Alpha.Diversity ~ pH.Readings, data = Combined_Data)
 modl_pH <- rlm(formula = Alpha.Diversity ~ pH.Readings, data = Combined_Data)
 summary(modl_pH)
 plot(modl_pH)
 f.robftest(modl_pH)
 
+
+# Model Soil Moisture vs Richness
 modl_SM <- rlm(formula = Alpha.Diversity ~ Soil.Moisture.Mean, data = Combined_Data)
 summary(modl_SM)
 plot(modl_SM)
 f.robftest(modl_SM)
 
-m2_weights <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = m2$residuals,
-                         Weight = m2$w) %>% 
-  arrange(Weight); m2_weights
 
-
-
-# VIsualize Data ----
+# Visualize Data ----
 (CanOpenvsRichness_Plot <- ggplot(Combined_Data, aes(x = CanOpen, y = Alpha.Diversity))+
     geom_point(aes(colour = Overstorey.Species))+
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
