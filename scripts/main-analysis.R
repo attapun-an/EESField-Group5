@@ -130,6 +130,7 @@ CanOpenvsCount_Plot <- ggplot(SpeciesSplit_Data, aes(x = CanOpen, y = Count))+
   geom_smooth(method = MASS::rlm, aes(fill = Group, colour = Group))+
   scale_colour_manual(values = Cols_Grp) +
   scale_fill_manual(values = Cols_Grp) +
+  ylim(0,9)
   theme_bw();CanOpenvsCount_Plot
 
 
