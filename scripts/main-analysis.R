@@ -5,6 +5,13 @@
 # Working directory is set to root directory (one above the script folder)
 rm(list=ls())  # clear memory
 
+# Install packages ----
+install.packages("dplyr")
+install.packages("tidyr")
+install.packages("stringr")
+install.packages("ggplot2")
+install.packages("MASS")
+
 # load libraries ----
 library(dplyr)      # for data manipulation
 library(tidyr)
@@ -30,15 +37,15 @@ str(Species_Data)
 # data cleaning and alignment ----
 
 Hemi_Data_1 <- Hemi_Data %>% 
-  select(File, CanOpen, LAI) %>%       # remove unwanted rows
+  dplyr::select(File, CanOpen, LAI) %>%       # remove unwanted rows
   rename(File.name = File)             # rename so that the two have something in 
                                        # common that can be used to join them 
                                        
 Plot_Data_1 <- Plot_Data %>%
-  select(Site.number, Overstorey.Species, Number.of.trees.in.plot, File.name, Alpha.Diversity) %>%    # remove unwanted rows
+  dplyr::select(Site.number, Overstorey.Species, Number.of.trees.in.plot, File.name, Alpha.Diversity) %>%    # remove unwanted rows
   mutate(File.name = paste("EE5_",File.name,".JPG", sep = ""),         # file number to file name so both are the same, helps with joining
          Plot.Number = Site.number) %>%                                #
-  select(!Site.number) %>%                                             # remove Site.number
+  dplyr::select(!Site.number) %>%                                             # remove Site.number
   mutate(Overstorey.Species = case_when(                               # creates 3 categories for dominant vegetation
     grepl("Scots", substr(Overstorey.Species,1,5)) ~ "Scots pine",     
     grepl("Sitka", substr(Overstorey.Species,1,5)) ~ "Sitka spruce", 
@@ -55,7 +62,7 @@ Species_Data_1 <- Species_Data %>%
     grepl("F", Group) ~ "Fungi",
     grepl("P", Group) ~ "Vascular.Plants",
     grepl("L", Group) ~ "Lichens")) %>% 
-  select(!Names) %>%                          # remove the Names column
+  dplyr::select(!Names) %>%                          # remove the Names column
   drop_na() %>%                               # remove that Fkin row that took 3 hours being a pain in the a** (it was empty)
   group_by(Plot.Number, Group) %>%            
   summarise(n = sum(Presence)) %>%              
@@ -75,7 +82,7 @@ str(Combined_Data)
 head(Combined_Data)
 
 SpeciesSplit_Data <- Combined_Data %>% 
-  select(CanOpen, LAI, Bryophytes, Vascular.Plants, Fungi, Lichens) %>% 
+  dplyr::select(CanOpen, LAI, Bryophytes, Vascular.Plants, Fungi, Lichens) %>% 
   pivot_longer(-c(CanOpen, LAI), names_to = "Group", values_to = "Count")
 
 head(SpeciesSplit_Data)
