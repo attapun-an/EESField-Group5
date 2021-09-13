@@ -161,8 +161,6 @@ f.robftest(modl_SM)
 
 # Visualize Data ----
 
-
-
 # CanOpen
 (CanOpenvsRichness_Plot <- ggplot(Combined_Data, aes(x = CanOpen, y = Alpha.Diversity))+
     geom_point(aes(colour = Overstorey.Species))+
@@ -184,6 +182,9 @@ ggsave("output/main_analysis/plt_CanOpen.jpg",CanOpenvsRichness_Plot, width = 8.
     geom_point(aes(colour = Overstorey.Species))+
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
     scale_colour_manual(values = c("#45FB93", "#BC49FF", "#E0765A"))+
+    xlab("\n Stocking Density")+
+    ylab("Canopy Openess \n")+
+    labs(colour = "Overstorey Species")+
     theme_bw()+
     theme(axis.title = element_text(size=12))
     )
