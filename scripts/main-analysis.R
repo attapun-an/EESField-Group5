@@ -13,6 +13,7 @@ install.packages("ggplot2")
 install.packages("MASS")
 install.packages("sfsmisc")
 install.packages("stargazer")
+install.packages("lme4")
 
 # load libraries ----
 library(dplyr)      # for data manipulation
