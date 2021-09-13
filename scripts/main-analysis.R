@@ -11,6 +11,7 @@ install.packages("tidyr")
 install.packages("stringr")
 install.packages("ggplot2")
 install.packages("MASS")
+install.packages("sfsmisc")
 
 # load libraries ----
 library(dplyr)      # for data manipulation
@@ -19,6 +20,7 @@ library(stringr)
 library(ggplot2)    # to plot data
 library(ggeffects)  # in case we have a mixed effect model? (not used as of now)
 library(MASS)       # to run robust linear models
+library(sfsmisc)
 
 # import data ----
 Hemi_Data <- read.csv("output/image-analysis-output.csv")           # imports data from our LAI calcs
@@ -95,22 +97,39 @@ head(SpeciesSplit_Data)
 
 # Canopy Openness vs. Species Richness
 # note (dependent ~ Independent)
-m1 <- rlm(formula = Alpha.Diversity ~ CanOpen, data = Combined_Data)
-summary(m1)
-plot(m1) # plot residuals
+modl_CanOpen <- rlm(formula = Alpha.Diversity ~ CanOpen, data = Combined_Data)
+summary(modl_CanOpen)
+plot(modl_CanOpen) # plot residuals
+f.robftest(modl_CanOpen)
 
-m1_weights <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = m1$residuals,
+weights_CanOpen <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = modl_CanOpen$residuals,
                          Weight = m1$w) %>% 
   arrange(Weight);m1_weights
 
 
-m2 <- rlm(formula = CanOpen ~ Stem.Count, data = Combined_Data)
-summary(m2)
-plot(m2)
+modl_Stem <- rlm(formula = CanOpen ~ Stem.Count, data = Combined_Data)
+summary(modl_Stem)
+plot(modl_Stem)
+f.robftest(modl_Stem)
 
 m2_weights <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = m2$residuals,
                          Weight = m2$w) %>% 
   arrange(Weight); m2_weights
+
+modl_pH <- rlm(formula = Alpha.Diversity ~ pH.Readings, data = Combined_Data)
+summary(modl_pH)
+plot(modl_pH)
+f.robftest(modl_pH)
+
+modl_SM <- rlm(formula = Alpha.Diversity ~ Soil.Moisture.Mean, data = Combined_Data)
+summary(modl_SM)
+plot(modl_SM)
+f.robftest(modl_SM)
+
+m2_weights <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = m2$residuals,
+                         Weight = m2$w) %>% 
+  arrange(Weight); m2_weights
+
 
 
 # VIsualize Data ----
