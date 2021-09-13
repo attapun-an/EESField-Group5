@@ -127,10 +127,12 @@ Cols_Grp <- c("#B7F500", "#E09800", "#00E097", "#FA2100")
 
 CanOpenvsCount_Plot <- ggplot(SpeciesSplit_Data, aes(x = CanOpen, y = Count))+
   geom_point(aes(colour = Group))+
+  coord_cartesian(ylim=c(0,9)) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
   geom_smooth(method = MASS::rlm, aes(fill = Group, colour = Group))+
   scale_colour_manual(values = Cols_Grp) +
   scale_fill_manual(values = Cols_Grp) +
-  ylim(0,9)
   theme_bw();CanOpenvsCount_Plot
 
 

@@ -1,26 +1,26 @@
-Site number,Grid ref.,LUX,Overstorey Species,Weather,Number of trees in plot,File name,Stocking density,Alpha Diversity
-1,NM 851 263,94.7,Sitka spruce,"Raining, overcast",24,2907,,5
-2,NM 851 263,111.8,Sitka spruce,"Raining, overcast",43,2911,,4
-3,NM 851 262,99.6,Sitka spruce,"Raining, overcast",54,2913,,6
-4,NM 851 262,318,Scots pine with Sitka either side,"Raining, overcast",30,2914,,13
-5,NM 851 262,65.9,Sitka spruce,"Raining, overcast",63,2915,,5
-6,NM 850 264,169.3,Larch,Lightly raining,27,2918,,12
-7,NM 850 263,270,Larch,Lightly raining,30,2919,,11
-8,NM 850 264,1430,Scots pine with Sitka either side,Lightly raining,21,2920,,11
-9,NM 850 264,1618,Sitka spruce and scots pine,Lightly raining,33,2921,,10
-10,NM 850 264,1756,Sitka spruce and scots pine,Overcast but dry,14,2923,,9
-11,NM 849 264,20200,Scotspine with Larch and scots pine either side. Rowan trees also directly East.,Overcast but dry,42,2926,,12
-12,NM 850 264,88.1,Sitka spruce,Overcast but dry,52,2928,,3
-13,NM 850 264,276,Sitka spruce,Overcast but dry,48,2930,,11
-14,NM 850 264,1950,Sitka spruce,Overcast but dry,42,2931,,14
-15,NM 849 264,187,Sitka spruce,Overcast but dry,33,2932,,5
-16,NM 849 264,282,Sitka spruce,Overcast but dry,35,2933,,5
-17,NM 849 264,39.8,Sitka spruce,Overcast but dry,63,2934,,3
-18,NM 849 264,115,Sitka spruce,Overcast but dry,49,2935,,3
-19,NM 848 265,152,Sitka spruce,Overcast but dry,49,2936,,5
-20,NM 848 265,338,Sitka spruce,Overcast but dry,46,2937,,4
-21,NM 848 265,292,Sitka spruce,Overcast but dry,45,2941,,4
-22,NM 848 265,164,Sitka spruce,Overcast but dry,52,2942,,5
-23,NM 848 265,147,Sitka spruce,Overcast but dry,62,2943,,6
-24,NM 848 265,260,Sitka spruce,Overcast but dry,59,2945,,13
-25,NM 848 265,149,Sitka spruce,Overcast but dry,60,2946,,9
+Plot_number,Grid_ref.,LUX,Overstorey_Species,Weather,Stems_in_10m_radius_circular plot,File_name,Mean_reading%,pH_readings,Plot_number,Soil_moisture_1,Soil_moisture_2,Soil_moisture_3,Soil_moisture_4
+1,NM 851 263,94.7,Sitka spruce,"Raining, overcast",24,2907,0,4.5,1,25.4,26.9,19,23.4
+2,NM 851 263,111.8,Sitka spruce,"Raining, overcast",43,2911,0,5,2,24.2,32.2,38.6,43.8
+3,NM 851 262,99.6,Sitka spruce,"Raining, overcast",54,2913,0,4.5,3,14.6,10.9,7,21
+4,NM 851 262,318,Scots pine with Sitka either side,"Raining, overcast",30,2914,0,4.5,4,15.6,64.6,58.7,13.2
+5,NM 851 262,65.9,Sitka spruce,"Raining, overcast",63,2915,0,4.5,5,22.4,52,26.6,31
+6,NM 850 264,169.3,Larch,Lightly raining,27,2918,0,5.5,6,11.3,42.3,84.3,37
+7,NM 850 263,270,Larch,Lightly raining,30,2919,0,5.5,7,20.6,21.5,14.2,20.8
+8,NM 850 264,1430,Scots pine with Sitka either side,Lightly raining,21,2920,0,5,8,66.8,53.7,64.2,>85
+9,NM 850 264,1618,Sitka spruce and scots pine,Lightly raining,33,2921,0,5.5,9,>85,>85,>85,>85
+10,NM 850 264,1756,Sitka spruce and scots pine,Overcast but dry,14,2923,0,4.5,10,>85,52.2,>85,>85
+11,NM 849 264,20200,Scotspine with Larch and scots pine either side. Rowan trees also directly East.,Overcast but dry,42,2926,0,4,11,60,65.4,>85,>85
+12,NM 850 264,88.1,Sitka spruce,Overcast but dry,52,2928,0,5,12,19.2,6.4,30.8,47.9
+13,NM 850 264,276,Sitka spruce,Overcast but dry,48,2930,0,4.5,13,24.9,52.4,65.5,14.1
+14,NM 850 264,1950,Sitka spruce,Overcast but dry,42,2931,0,5,14,51.7,>85,>85,>85
+15,NM 849 264,187,Sitka spruce,Overcast but dry,33,2932,0,4.5,15,18.5,52.6,27,47
+16,NM 849 264,282,Sitka spruce,Overcast but dry,35,2933,0,4.5,16,23.9,20,35.9,29.6
+17,NM 849 264,39.8,Sitka spruce,Overcast but dry,63,2934,0,4.5,17,18.7,20.7,18.4,12
+18,NM 849 264,115,Sitka spruce,Overcast but dry,49,2935,0,4.5,18,41.2,24.7,34,38.2
+19,NM 848 265,152,Sitka spruce,Overcast but dry,49,2936,0,5.5,19,23.6,29.6,22.6,33.2
+20,NM 848 265,338,Sitka spruce,Overcast but dry,46,2937,0,4.5,20,30.2,21.4,23.8,29
+21,NM 848 265,292,Sitka spruce,Overcast but dry,45,2941,0,6,21,28.2,27.3,56,54
+22,NM 848 265,164,Sitka spruce,Overcast but dry,52,2942,0,4.5,22,40.4,70.3,40.2,49.8
+23,NM 848 265,147,Sitka spruce,Overcast but dry,62,2943,0,4.5,23,19,9.1,14.8,5.9
+24,NM 848 265,260,Sitka spruce,Overcast but dry,59,2945,0,4.5,24,22.8,18.2,29.6,23.5
+25,NM 848 265,149,Sitka spruce,Overcast but dry,60,2946,0,4.5,25,47.6,26.8,27.3,17
