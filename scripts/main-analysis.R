@@ -38,18 +38,22 @@ str(Species_Data)
 
 Hemi_Data_1 <- Hemi_Data %>% 
   dplyr::select(File, CanOpen, LAI) %>%       # remove unwanted rows
-  rename(File.name = File)             # rename so that the two have something in 
+  rename(File.Name = File)             # rename so that the two have something in 
                                        # common that can be used to join them 
                                        
 Plot_Data_1 <- Plot_Data %>%
-  dplyr::select(Site.number, Overstorey.Species, Number.of.trees.in.plot, File.name, Alpha.Diversity) %>%    # remove unwanted rows
-  mutate(File.name = paste("EE5_",File.name,".JPG", sep = ""),         # file number to file name so both are the same, helps with joining
-         Plot.Number = Site.number) %>%                                #
-  dplyr::select(!Site.number) %>%                                             # remove Site.number
-  mutate(Overstorey.Species = case_when(                               # creates 3 categories for dominant vegetation
-    grepl("Scots", substr(Overstorey.Species,1,5)) ~ "Scots pine",     
-    grepl("Sitka", substr(Overstorey.Species,1,5)) ~ "Sitka spruce", 
-    grepl("Larch", substr(Overstorey.Species,1,5))~"Larch"))
+  mutate(File_name = paste("EE5_",File_name,".JPG", sep = ""),         # file number to file name so both are the same, helps with joining
+         Plot_number = Plot_number) %>%                                #
+  # dplyr::select(!Plot_number) %>%                                             # remove Site.number
+  mutate(Overstorey_Species = case_when(                               # creates 3 categories for dominant vegetation
+    grepl("Scots", substr(Overstorey_Species,1,5)) ~ "Scots pine",     
+    grepl("Sitka", substr(Overstorey_Species,1,5)) ~ "Sitka spruce", 
+    grepl("Larch", substr(Overstorey_Species,1,5))~"Larch")) %>% 
+  rename(File.Name = File_name, Plot.Number = Plot_number, Overstorey.Species = Overstorey_Species,
+         Stem.Count = Stems_in_10m_radius_circular.plot, Grid.Ref = Grid_ref., Mean.Reading = Mean_reading.,
+         pH.Readings = pH_readings, Soil.Moisture_1 = Soil_moisture_1, Soil.Moisture_2 = Soil_moisture_2,
+         Soil.Moisture_3 = Soil_moisture_3, Soil.Moisture_4 = Soil_moisture_4)
+
 
 str(Plot_Data_1)
 
@@ -69,13 +73,11 @@ Species_Data_1 <- Species_Data %>%
   pivot_wider(names_from = Group, values_from = n) %>% 
   relocate(Vascular.Plants, .after = Bryophytes)
   
-head(Species_Data_1)
-str(Species_Data_1)
-
 # combines the three data tables
-Combined_Data <- left_join(Plot_Data_1, Hemi_Data_1, by="File.name") 
+Combined_Data <- left_join(Plot_Data_1, Hemi_Data_1, by="File.Name") 
 Combined_Data <- left_join(Combined_Data, Species_Data_1, by="Plot.Number") %>% 
-  relocate(Plot.Number)
+  relocate(Plot.Number) %>% 
+  mutate(Alpha.Diversity = Bryophytes + Vascular.Plants + Fungi + Lichens)
 Combined_Data$Overstorey.Species <- as.factor(Combined_Data$Overstorey.Species) # changes data type of Overstorey.species to a factor 
 
 str(Combined_Data)
@@ -116,11 +118,17 @@ m2_weights <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = m2
     theme_bw()
     )
 
-(StockvsCanOpen_Plot <- ggplot(Combined_Data, aes(x = Number.of.trees.in.plot, y = CanOpen))+
+(StockvsCanOpen_Plot <- ggplot(Combined_Data, aes(x = Stem.Count, y = CanOpen))+
     geom_point(aes(colour = Overstorey.Species))+
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
     theme_bw()
     )
+
+(pHvsRichness_Plot <- ggplot(Combined_Data, aes(x = pH.Readings, y = Alpha.Diversity))+
+    geom_point(aes(colour = Overstorey.Species))+
+    geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
+    theme_bw()
+)
 
 # set colours:
 Cols_Grp <- c("#B7F500", "#E09800", "#00E097", "#FA2100")
@@ -140,3 +148,4 @@ CanOpenvsCount_Plot <- ggplot(SpeciesSplit_Data, aes(x = CanOpen, y = Count))+
 ggsave("output/plots/plot_CanOpenvsRichness.jpg", CanOpenvsRichness_Plot)
 ggsave("output/plots/plot_StockvsCanOpen.jpg", StockvsCanOpen_Plot)
 ggsave("output/plots/plot_CanOpenvsCount.jpg", CanOpenvsCount_Plot)
+ggsave("output/plots/plot_pHvsRichness.jpg", pHvsRichness_Plot)
