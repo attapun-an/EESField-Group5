@@ -141,6 +141,9 @@ stargazer(modl_ALL, out = "output/main_analysis/Modl_ALL.txt",
 modl_ALL_MIXED <- lmer(formula = Alpha.Diversity ~ CanOpen +Stem.Count + Soil.Moisture.Mean + pH.Readings + (1|Transect), 
                        data = Combined_Data)
 summary(modl_ALL_MIXED)
+stargazer(modl_ALL_MIXED, out = "output/main_analysis/Modl_MIXED.txt",
+          title = "Multiple Regression With All Predictor Variables vs Alpha Diversity" , 
+          type = "text", report=("vc*p"))
 # Yay, the transect is not responsible for any varience 
 
 
