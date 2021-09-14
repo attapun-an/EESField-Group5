@@ -215,7 +215,7 @@ stargazer(modl_Fung, out = "output/main_analysis/Modl_Split_Fung.txt",
     scale_y_continuous(expand = c(0, 0)) +
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
     xlab("\n Canopy Openess")+
-    ylab("Understory Species Richness \n")+
+    ylab("Understorey Species Richness \n")+
     labs(colour = "Overstorey Species")+
     scale_colour_manual(values = c("#45FB93", "#BC49FF", "#E0765A"))+
     scale_fill_manual(values =c("#BAF3D2")) +
