@@ -9,7 +9,6 @@ Project 5 aims to investigate links between overstorey structure and understory 
 
 <img src="images/QR.png" width="150" height="150" />    
 
-Project Website
 
 #### Index
 | Item     | Description     |
