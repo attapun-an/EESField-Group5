@@ -176,3 +176,15 @@ for(i in 1:nr.images){
   dev.off()
 }
 
+# Export photos for website ----
+# read a sample image file
+im <- readJPEG("images/field/EE5_2946.JPG", native = F)
+
+radius <- fov.px(30, 8, 5.95)  # this function was found on the HemiPhoto Guide, 
+
+
+im.hemi = Image2Hemiphot(im) 
+jpeg("output/image_test/HemiImage.jpg", width = 1500, height = 1080, units = "px", pointsize = 32)
+im.hemi = SetCircle(im.hemi, cr = radius)
+PlotHemiImage(image = im.hemi, draw.circle = T, channel = "")   #note that east and west are reversed as the image looks upward
+dev.off()
