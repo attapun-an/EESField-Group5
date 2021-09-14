@@ -107,6 +107,7 @@ head(SpeciesSplit_Data)
 # normality test (<0.05 = higher chance data not normal)
 shapiro.test(Combined_Data$Alpha.Diversity)  
 # bi-modal
+ggsave("output/main_analysis/hist_richness.jpg")
 
 
 # Canopy openness
