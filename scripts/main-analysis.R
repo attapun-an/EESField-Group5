@@ -233,7 +233,7 @@ ggsave("output/main_analysis/plt_CanOpen.jpg",CanOpenvsRichness_Plot, width = 8.
 
 # CanOpen Stand Type Separated
 (CanOpenvsType_Plot <- ggplot(Combined_Data, aes(x = CanOpen, y = Alpha.Diversity))+
-    geom_point(aes(colour = Stand.Type, shape = Overstorey.Species))+
+    geom_point(aes(colour = Overstorey.Species, shape = Stand.Type))+
     scale_x_continuous(expand = c(0, 0.02)) +
     scale_y_continuous(expand = c(0, 0)) +
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
@@ -247,7 +247,7 @@ ggsave("output/main_analysis/plt_CanOpen.jpg",CanOpenvsRichness_Plot, width = 8.
     theme_bw()+
     theme(axis.title = element_text(size=12))
 )
-ggsave("output/main_analysis/plt_CanOpen_Stand_Type.jpg",CanOpenvsRichness_Plot, width = 8.2, height = 5.16, units = "in")
+ggsave("output/main_analysis/plt_CanOpen_Stand_Type.jpg",CanOpenvsType_Plot, width = 8.2, height = 5.16, units = "in")
 
 # Stem vs CanOpen
 (StockvsCanOpen_Plot <- ggplot(Combined_Data, aes(x = Stocking.Density, y = CanOpen))+
