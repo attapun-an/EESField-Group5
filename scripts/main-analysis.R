@@ -50,6 +50,10 @@ Hemi_Data_1 <- Hemi_Data %>%
 Plot_Data_1 <- Plot_Data %>%
   mutate(File_name = paste("EE5_",File_name,".JPG", sep = ""),         # file number to file name so both are the same, helps with joining
          Plot_number = Plot_number) %>%                                #
+  mutate(Stand.Type = case_when(
+    nchar(as.character(Overstorey_Species)) > 12 ~ "Mixed",
+    TRUE ~ "Pure"
+  )) %>% 
   mutate(Overstorey_Species = case_when(                               # creates 3 categories for dominant vegetation
     grepl("Scots", substr(Overstorey_Species,1,5)) ~ "Scots pine",     
     grepl("Sitka", substr(Overstorey_Species,1,5)) ~ "Sitka spruce", 
@@ -61,6 +65,8 @@ Plot_Data_1 <- Plot_Data %>%
 
 
 str(Plot_Data_1)
+count(Plot_Data_1, Stand.Type)
+
 
 Species_Data_1 <- Species_Data %>%
   rename(Plot.Number = X) %>%                                                      
@@ -152,7 +158,8 @@ weights_CanOpen <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals
   arrange(Weight);weights_CanOpen
 
 
-# Model Canopy openess vs Stocking Density
+
+# Model Canopy openness vs Stocking Density
 modl_StkDen <- lm(formula = CanOpen ~ Stocking.Density, data = Combined_Data)
 summary(modl_StkDen)
 plot(modl_StkDen)
@@ -214,7 +221,7 @@ stargazer(modl_Fung, out = "output/main_analysis/Modl_Split_Fung.txt",
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
-    xlab("\n Canopy Openess")+
+    xlab("\n Canopy Openness")+
     ylab("Understorey Species Richness \n")+
     labs(colour = "Overstorey Species")+
     scale_colour_manual(values = c("#45FB93", "#BC49FF", "#E0765A"))+
@@ -224,13 +231,29 @@ stargazer(modl_Fung, out = "output/main_analysis/Modl_Split_Fung.txt",
  )
 ggsave("output/main_analysis/plt_CanOpen.jpg",CanOpenvsRichness_Plot, width = 8.2, height = 5.16, units = "in")
 
+# CanOpen Stand Type Separated
+(CanOpenvsType_Plot <- ggplot(Combined_Data, aes(x = CanOpen, y = Alpha.Diversity))+
+    geom_point(aes(colour = Stand.Type, shape = Overstorey.Species))+
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+    geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
+    xlab("\n Canopy Openness")+
+    ylab("Understorey Species Richness \n")+
+    labs(colour = "Overstorey Species")+
+    scale_colour_manual(values = c("#45FB93", "#BC49FF", "#E0765A"))+
+    scale_fill_manual(values =c("#BAF3D2")) +
+    theme_bw()+
+    theme(axis.title = element_text(size=12))
+)
+ggsave("output/main_analysis/plt_CanOpen_Stand_Type.jpg",CanOpenvsRichness_Plot, width = 8.2, height = 5.16, units = "in")
+
 # Stem vs CanOpen
 (StockvsCanOpen_Plot <- ggplot(Combined_Data, aes(x = Stocking.Density, y = CanOpen))+
     geom_point(aes(colour = Overstorey.Species))+
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
     scale_colour_manual(values = c("#45FB93", "#BC49FF", "#E0765A"))+
     xlab("\n Stocking Density")+
-    ylab("Canopy Openess \n")+
+    ylab("Canopy Openness \n")+
     labs(colour = "Overstorey Species")+
     theme_bw()+
     theme(axis.title = element_text(size=12))
@@ -267,7 +290,7 @@ Cols_Grp <- c("#B7F500", "#E09800", "#00E097", "#FA2100")
   geom_smooth(method = MASS::rlm, aes(fill = Group, colour = Group))+
   scale_colour_manual(values = Cols_Grp) +
   scale_fill_manual(values = Cols_Grp) +
-  xlab("\n Canopy Openess")+
+  xlab("\n Canopy Openness")+
   ylab("Count \n")+
   theme_bw()+
   theme(axis.title = element_text(size=12))
