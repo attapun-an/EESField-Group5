@@ -1,7 +1,7 @@
 # EES Field Course Project 5 2021
 Coding Repository For EES Field Ecology [ECSC10033] Project 5  
-Members: Natasha, Ailsa, Laura, James, Attapun  
-Supervisor: Matt    
+Members: Anivat, A., Barraclough, L., Frost, N., Reid-Thomas, J., Staderlee, A., Wong, H.  
+Supervisor: Rees, M.    
 Coded by attapun-an (attapunanivat@gmail.com)  
 
 #### Summary
