@@ -234,7 +234,7 @@ ggsave("output/main_analysis/plt_CanOpen.jpg",CanOpenvsRichness_Plot, width = 8.
 # CanOpen Stand Type Separated
 (CanOpenvsType_Plot <- ggplot(Combined_Data, aes(x = CanOpen, y = Alpha.Diversity))+
     geom_point(aes(colour = Stand.Type, shape = Overstorey.Species))+
-    scale_x_continuous(expand = c(0, 0)) +
+    scale_x_continuous(expand = c(0, 0.02)) +
     scale_y_continuous(expand = c(0, 0)) +
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
     xlab("\n Canopy Openness")+
@@ -242,6 +242,8 @@ ggsave("output/main_analysis/plt_CanOpen.jpg",CanOpenvsRichness_Plot, width = 8.
     labs(colour = "Overstorey Species")+
     scale_colour_manual(values = c("#45FB93", "#BC49FF", "#E0765A"))+
     scale_fill_manual(values =c("#BAF3D2")) +
+    geom_text(aes(x = CanOpen, y = Alpha.Diversity, label= Plot.Number),
+              nudge_y = 0.5)+
     theme_bw()+
     theme(axis.title = element_text(size=12))
 )
