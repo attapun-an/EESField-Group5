@@ -220,7 +220,7 @@ stargazer(modl_Fung, out = "output/main_analysis/Modl_Split_Fung.txt",
 
 # CanOpen
 (CanOpenvsRichness_Plot <- ggplot(Combined_Data, aes(x = CanOpen, y = Alpha.Diversity))+
-    geom_point(aes(colour = Overstorey.Species))+
+    geom_point(aes(colour = Overstorey.Species), size = 4)+
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
@@ -254,10 +254,10 @@ ggsave("output/main_analysis/plt_CanOpen_Stand_Type.jpg",CanOpenvsType_Plot, wid
 
 # Stem vs CanOpen
 (StockvsCanOpen_Plot <- ggplot(Combined_Data, aes(x = Stocking.Density, y = CanOpen))+
-    geom_point(aes(colour = Overstorey.Species))+
+    geom_point(aes(colour = Overstorey.Species), size = 4)+
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
     scale_colour_manual(values = c("#45FB93", "#BC49FF", "#E0765A"))+
-    xlab("\n Stocking Density")+
+    xlab("\n Stocking Density (Stems/m^2)")+
     ylab("Canopy Openness \n")+
     labs(colour = "Overstorey Species")+
     theme_bw()+
@@ -267,7 +267,7 @@ ggsave("output/main_analysis/plt_StockvsCanOpen.jpg", StockvsCanOpen_Plot, width
 
 
 (pHvsRichness_Plot <- ggplot(Combined_Data, aes(x = pH.Readings, y = Alpha.Diversity))+
-    geom_point(aes(colour = Overstorey.Species))+
+    geom_point(aes(colour = Overstorey.Species), size = 4)+
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
     theme_bw()+
     theme(axis.title = element_text(size=12))
@@ -276,7 +276,7 @@ ggsave("output/main_analysis/plt_pH.jpg", pHvsRichness_Plot, width = 8.2, height
 
 
 (SoilMoisturevsRichness_Plot <- ggplot(Combined_Data, aes(x = Soil.Moisture.Mean, y = Alpha.Diversity))+
-    geom_point(aes(colour = Overstorey.Species))+
+    geom_point(aes(colour = Overstorey.Species), size = 4)+
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
     theme_bw()+
     theme(axis.title = element_text(size=12))
@@ -288,7 +288,7 @@ ggsave("output/main_analysis/plt_SoilMoist.jpg", SoilMoisturevsRichness_Plot, wi
 Cols_Grp <- c("#B7F500", "#E09800", "#00E097", "#FA2100")
 
 (CanOpenvsCount_Plot <- ggplot(SpeciesSplit_Data, aes(x = CanOpen, y = Count))+
-  geom_point(aes(colour = Group))+
+  geom_point(aes(color = Group), size = 4)+
   coord_cartesian(ylim=c(0,9)) +
   scale_x_continuous(expand = c(0, 0)) +
   scale_y_continuous(expand = c(0, 0)) +
