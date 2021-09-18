@@ -113,7 +113,7 @@ head(SpeciesSplit_Data)
 # normality test (<0.05 = higher chance data not normal)
 shapiro.test(Combined_Data$Alpha.Diversity)  
 # bi-modal
-ggsave("output/main_analysis/hist_richness.jpg")
+ggsave("output/main_analysis/hist_richness.jpg",width = 8.2, height = 5.16, units = "in")
 
 
 # Canopy openness
@@ -131,7 +131,8 @@ shapiro.test(Combined_Data$CanOpen)
 # Models ----
 
 # PLUG IT ALL IN AHAHAHHAHAHAHHAHA (to check which factor is the most effect argh english.exe crashed)
-modl_ALL <- lm(formula = Alpha.Diversity ~ CanOpen + Stocking.Density + Soil.Moisture.Mean + pH.Readings, data = Combined_Data)
+modl_ALL <- lm(formula = Alpha.Diversity ~ CanOpen + Stocking.Density
+               + Soil.Moisture.Mean + pH.Readings, data = Combined_Data)
 summary(modl_ALL)
 stargazer(modl_ALL, out = "output/main_analysis/Modl_ALL.txt",
           title = "Multiple Regression With All Predictor Variables vs Alpha Diversity" , 
@@ -194,6 +195,8 @@ f.robftest(modl_SM)
 stargazer(modl_SM, out = "output/main_analysis/Modl_SM.txt",
           type = "text", report=("vc*p"))
 
+
+# Model each group vs Canopy Openness individually
 modl_Bryo <- lm(formula = Bryophytes ~ CanOpen, data = Combined_Data)
 summary(modl_Bryo)
 plot(modl_Bryo)
