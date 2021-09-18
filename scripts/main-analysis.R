@@ -131,7 +131,7 @@ shapiro.test(Combined_Data$CanOpen)
 # Models ----
 
 # PLUG IT ALL IN AHAHAHHAHAHAHHAHA (to check which factor is the most effect argh english.exe crashed)
-modl_ALL <- lm(formula = Alpha.Diversity ~ CanOpen + Stem.Count + Soil.Moisture.Mean, data = Combined_Data)
+modl_ALL <- lm(formula = Alpha.Diversity ~ CanOpen + Stocking.Density + Soil.Moisture.Mean + pH.Readings, data = Combined_Data)
 summary(modl_ALL)
 stargazer(modl_ALL, out = "output/main_analysis/Modl_ALL.txt",
           title = "Multiple Regression With All Predictor Variables vs Alpha Diversity" , 
