@@ -128,7 +128,7 @@ shapiro.test(Combined_Data$CanOpen)
     theme_classic())
 shapiro.test(Combined_Data$CanOpen)
 
-# Models ----
+# Complex Models ----
 
 # PLUG IT ALL IN AHAHAHHAHAHAHHAHA (to check which factor is the most effect argh english.exe crashed)
 modl_ALL <- lm(formula = Alpha.Diversity ~ CanOpen + Stocking.Density
@@ -139,7 +139,8 @@ stargazer(modl_ALL, out = "output/main_analysis/Modl_ALL.txt",
           type = "text", report=("vc*p"))
 
 # MIXED EFFECTS MODEL (to check for spatial auto correlation within transects)
-modl_ALL_MIXED <- lmer(formula = Alpha.Diversity ~ CanOpen +Stem.Count + Soil.Moisture.Mean + pH.Readings + (1|Transect), 
+modl_ALL_MIXED <- lmer(formula = Alpha.Diversity ~ CanOpen +Stem.Count +
+                         Soil.Moisture.Mean + pH.Readings + (1|Transect), 
                        data = Combined_Data)
 summary(modl_ALL_MIXED)
 stargazer(modl_ALL_MIXED, out = "output/main_analysis/Modl_MIXED.txt",
@@ -147,97 +148,68 @@ stargazer(modl_ALL_MIXED, out = "output/main_analysis/Modl_MIXED.txt",
           type = "text", report=("vc*p"))
 # Yay, the transect is not responsible for any varience 
 
+# Models with graphs----
 
-# Canopy Openness vs. Species Richness
+# set colours:
+Cols_Grp <- c("#B7F500", "#E09800", "#00E097", "#FA2100")
+Cols_Stand <- c("#45FB93", "#BC49FF", "#E0765A")
+
+# CANOPY OPENNESS VS SPECIES RICHNESS 
+
+# Modeling
 # note (dependent ~ Independent)
 modl_CanOpen <- lm(formula = Alpha.Diversity ~ CanOpen, data = Combined_Data)
 summary(modl_CanOpen)
 plot(modl_CanOpen) # plot residuals
-f.robftest(modl_CanOpen)
-stargazer(modl_CanOpen, out = "output/main_analysis/Modl_CanOpen.txt",
-          type = "text", report=("vc*p"))
 
-weights_CanOpen <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = modl_CanOpen$residuals,
-                         Weight = modl_CanOpen$w) %>% 
-  arrange(Weight);weights_CanOpen
-
-
-
-# Model Canopy openness vs Stocking Density
-modl_StkDen <- lm(formula = CanOpen ~ Stocking.Density, data = Combined_Data)
-summary(modl_StkDen)
-plot(modl_StkDen)
-f.robftest(modl_StkDen)
-stargazer(modl_StkDen, out = "output/main_analysis/modl_StkDen.txt",
-          title = "Canopy Openness VS Stem Count",
-          type = "text", report=("vc*p"))
-
-m2_weights <- data.frame(Plot.Number = Combined_Data$Plot.Number, Residuals = modl_StkDns$residuals,
-                         Weight = modl_StkDns$w) %>% 
-  arrange(Weight); m2_weights
-
-
-# Model pH vs Richness
-modl_pH <- lm(formula = Alpha.Diversity ~ pH.Readings, data = Combined_Data)
-modl_pH <- rlm(formula = Alpha.Diversity ~ pH.Readings, data = Combined_Data)
-summary(modl_pH)
-plot(modl_pH)
-f.robftest(modl_pH)
-stargazer(modl_pH, out = "output/main_analysis/Modl_pH.txt",
-          type = "text", report=("vc*p"))
-
-
-# Model Soil Moisture vs Richness
-modl_SM <- lm(formula = Alpha.Diversity ~ Soil.Moisture.Mean, data = Combined_Data)
-summary(modl_SM)
-plot(modl_SM)
-f.robftest(modl_SM)
-stargazer(modl_SM, out = "output/main_analysis/Modl_SM.txt",
-          type = "text", report=("vc*p"))
-
-
-# Model each group vs Canopy Openness individually
-modl_Bryo <- lm(formula = Bryophytes ~ CanOpen, data = Combined_Data)
-summary(modl_Bryo)
-plot(modl_Bryo)
-f.robftest(modl_Bryo)
-stargazer(modl_Bryo, out = "output/main_analysis/Modl_Split_Bryo.txt",
-          type = "text", report=("vc*p"))
-
-modl_Vasc <- lm(formula = Vascular.Plants ~ CanOpen, data = Combined_Data)
-summary(modl_Vasc)
-plot(modl_Vasc)
-f.robftest(modl_Vasc)
-stargazer(modl_Vasc, out = "output/main_analysis/Modl_Split_Vasc.txt",
-          type = "text", report=("vc*p"))
-
-modl_Fung <- lm(formula = Fungi ~ CanOpen, data = Combined_Data)
-summary(modl_Fung)
-plot(modl_Fung)
-f.robftest(modl_Fung)
-stargazer(modl_Fung, out = "output/main_analysis/Modl_Split_Fung.txt",
-          type = "text", report=("vc*p"))
-
-
-# Visualize Data ----
-
-# CanOpen
+# Visualization 
 (CanOpenvsRichness_Plot <- ggplot(Combined_Data, aes(x = CanOpen, y = Alpha.Diversity))+
-    geom_point(aes(colour = Overstorey.Species), size = 4)+
+    geom_point(aes(colour = Overstorey.Species))+
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
     xlab("\n Canopy Openness")+
     ylab("Understorey Species Richness \n")+
     labs(colour = "Overstorey Species")+
-    scale_colour_manual(values = c("#45FB93", "#BC49FF", "#E0765A"))+
-    scale_fill_manual(values =c("#BAF3D2")) +
+    scale_colour_manual(values = Cols_Stand)+
     theme_bw()+
     theme(axis.title = element_text(size=12))
  )
+stargazer(modl_CanOpen, out = "output/main_analysis/Modl_CanOpen.txt",
+          type = "text", report=("vc*p"))
 ggsave("output/main_analysis/plt_CanOpen.jpg",CanOpenvsRichness_Plot, width = 8.2, height = 5.16, units = "in")
 
-# CanOpen Stand Type Separated
+
+# CANOPY OPENNESS VS RICHNESS (SPLIT BY GROUP)
+
+# Modeling
+modl_Split <- lm(formula = CanOpen ~ Bryophytes + Fungi + Vascular.Plants + Lichens, data = Combined_Data)
+summary(modl_split)
+
+
+# Visualization 
+(CanOpenvsCount_Plot <- ggplot(SpeciesSplit_Data, aes(x = CanOpen, y = Count))+
+    geom_point(aes(color = Group))+
+    coord_cartesian(ylim=c(0,9)) +
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+    geom_smooth(method = MASS::rlm, aes(fill = Group, colour = Group))+
+    scale_colour_manual(values = Cols_Grp) +
+    scale_fill_manual(values = Cols_Grp) +
+    xlab("\n Canopy Openness")+
+    ylab("Count \n")+
+    theme_bw()+
+    theme(axis.title = element_text(size=12))
+)
+
+stargazer(modl_Split, out = "output/main_analysis/Modl_Split.txt",
+          type = "text", report=("vc*p"))
+ggsave("output/main_analysis/plt_CanOpen_split.jpg", CanOpenvsCount_Plot, width = 8.2, height = 5.16, units = "in")
+
+
+# CANOPY OPENNESS VS RICHNESS STAND TYPE + PLOT
+
+#Visualize
 (CanOpenvsType_Plot <- ggplot(Combined_Data, aes(x = CanOpen, y = Alpha.Diversity))+
     geom_point(aes(colour = Overstorey.Species, shape = Stand.Type))+
     scale_x_continuous(expand = c(0, 0.02)) +
@@ -245,9 +217,8 @@ ggsave("output/main_analysis/plt_CanOpen.jpg",CanOpenvsRichness_Plot, width = 8.
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
     xlab("\n Canopy Openness")+
     ylab("Understorey Species Richness \n")+
-    labs(colour = "Overstorey Species")+
-    scale_colour_manual(values = c("#45FB93", "#BC49FF", "#E0765A"))+
-    scale_fill_manual(values =c("#BAF3D2")) +
+    labs(colour = "Overstorey Species", shape = "Stand Type")+
+    scale_colour_manual(values = Cols_Stand)+
     geom_text(aes(x = CanOpen, y = Alpha.Diversity, label= Plot.Number),
               nudge_y = 0.5)+
     theme_bw()+
@@ -255,52 +226,82 @@ ggsave("output/main_analysis/plt_CanOpen.jpg",CanOpenvsRichness_Plot, width = 8.
 )
 ggsave("output/main_analysis/plt_CanOpen_Stand_Type.jpg",CanOpenvsType_Plot, width = 8.2, height = 5.16, units = "in")
 
-# Stem vs CanOpen
+# STOCKING DENSITY VS CANOPY OPENNESS
+
+# Model 
+modl_StkDen <- lm(formula = CanOpen ~ Stocking.Density, data = Combined_Data)
+summary(modl_StkDen)
+plot(modl_StkDen)
+
+# Visualization
 (StockvsCanOpen_Plot <- ggplot(Combined_Data, aes(x = Stocking.Density, y = CanOpen))+
-    geom_point(aes(colour = Overstorey.Species), size = 4)+
+    geom_point(aes(colour = Overstorey.Species))+
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
-    scale_colour_manual(values = c("#45FB93", "#BC49FF", "#E0765A"))+
+    scale_colour_manual(values = Cols_Stand)+
     xlab("\n Stocking Density (Stems/m^2)")+
     ylab("Canopy Openness \n")+
     labs(colour = "Overstorey Species")+
     theme_bw()+
     theme(axis.title = element_text(size=12))
     )
+
+# Save Model and Graph
+stargazer(modl_StkDen, out = "output/main_analysis/modl_StkDen.txt",
+          title = "Canopy Openness VS Stem Count",
+          type = "text", report=("vc*p"))
 ggsave("output/main_analysis/plt_StockvsCanOpen.jpg", StockvsCanOpen_Plot, width = 8.2, height = 5.16, units = "in")
 
 
+# pH VS RICHNESS
+
+# Model pH vs Richness
+modl_pH <- lm(formula = Alpha.Diversity ~ pH.Readings, data = Combined_Data)
+summary(modl_pH)
+plot(modl_pH)
+
+# Visualization
 (pHvsRichness_Plot <- ggplot(Combined_Data, aes(x = pH.Readings, y = Alpha.Diversity))+
-    geom_point(aes(colour = Overstorey.Species), size = 4)+
+    geom_point(aes(colour = Overstorey.Species))+
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
+    xlab("\n pH")+
+    ylab("Understorey Species Richness \n")+
+    labs(colour = "Overstorey Species")+
+    scale_colour_manual(values = Cols_Stand)+
     theme_bw()+
     theme(axis.title = element_text(size=12))
 )
+
+# Save 
+stargazer(modl_pH, out = "output/main_analysis/Modl_pH.txt",
+          type = "text", report=("vc*p"))
 ggsave("output/main_analysis/plt_pH.jpg", pHvsRichness_Plot, width = 8.2, height = 5.16, units = "in")
 
 
+
+# SOIL MOISTURE VS RICHNESS
+
+# Model Soil Moisture vs Richness
+modl_SM <- lm(formula = Alpha.Diversity ~ Soil.Moisture.Mean, data = Combined_Data)
+summary(modl_SM)
+plot(modl_SM)
+
+
+# Visualize 
 (SoilMoisturevsRichness_Plot <- ggplot(Combined_Data, aes(x = Soil.Moisture.Mean, y = Alpha.Diversity))+
-    geom_point(aes(colour = Overstorey.Species), size = 4)+
+    geom_point(aes(colour = Overstorey.Species))+
     geom_smooth(method = MASS::rlm, color = "#A3A1A8")+
+    xlab("\n Soil Moisture")+
+    ylab("Understorey Species Richness \n")+
+    labs(colour = "Overstorey Species")+
+    scale_colour_manual(values = c("#45FB93", "#BC49FF", "#E0765A"))+
+    
     theme_bw()+
     theme(axis.title = element_text(size=12))
 )
+
+# Save Data 
+stargazer(modl_SM, out = "output/main_analysis/Modl_SM.txt",
+          type = "text", report=("vc*p"))
 ggsave("output/main_analysis/plt_SoilMoist.jpg", SoilMoisturevsRichness_Plot, width = 8.2, height = 5.16, units = "in")
 
 
-# set colours:
-Cols_Grp <- c("#B7F500", "#E09800", "#00E097", "#FA2100")
-
-(CanOpenvsCount_Plot <- ggplot(SpeciesSplit_Data, aes(x = CanOpen, y = Count))+
-  geom_point(aes(color = Group), size = 4)+
-  coord_cartesian(ylim=c(0,9)) +
-  scale_x_continuous(expand = c(0, 0)) +
-  scale_y_continuous(expand = c(0, 0)) +
-  geom_smooth(method = MASS::rlm, aes(fill = Group, colour = Group))+
-  scale_colour_manual(values = Cols_Grp) +
-  scale_fill_manual(values = Cols_Grp) +
-  xlab("\n Canopy Openness")+
-  ylab("Count \n")+
-  theme_bw()+
-  theme(axis.title = element_text(size=12))
-)
-ggsave("output/main_analysis/plt_CanOpen_split.jpg", CanOpenvsCount_Plot, width = 8.2, height = 5.16, units = "in")
