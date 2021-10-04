@@ -197,7 +197,7 @@ summary(modl_split)
     scale_colour_manual(values = Cols_Grp) +
     scale_fill_manual(values = Cols_Grp) +
     xlab("\n Canopy Openness")+
-    ylab("Count \n")+
+    ylab("Understorey Species Richness \n")+
     theme_bw()+
     theme(axis.title = element_text(size=12))
 )
