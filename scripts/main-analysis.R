@@ -25,6 +25,8 @@ library(MASS)       # to run robust linear models
 library(sfsmisc)
 library(stargazer)
 library(lme4)
+library(sjPlot)
+
 
 # import data ----
 Hemi_Data <- read.csv("output/image-analysis-output.csv")           # imports data from our LAI calcs
@@ -143,9 +145,7 @@ modl_ALL_MIXED <- lmer(formula = Alpha.Diversity ~ CanOpen +Stem.Count +
                          Soil.Moisture.Mean + pH.Readings + (1|Transect), 
                        data = Combined_Data)
 summary(modl_ALL_MIXED)
-stargazer(modl_ALL_MIXED, out = "output/main_analysis/Modl_MIXED.txt",
-          title = "Multiple Regression With All Predictor Variables vs Alpha Diversity" , 
-          type = "text", report=("vc*p"))
+tab_model(modl_ALL_MIXED, show.ci = FALSE, show.est = FALSE, file = "output/main_analysis/Modl_MIXED.html")
 # Yay, the transect is not responsible for any varience 
 
 # Models with graphs----
@@ -153,6 +153,12 @@ stargazer(modl_ALL_MIXED, out = "output/main_analysis/Modl_MIXED.txt",
 # set colours:
 Cols_Grp <- c("#B7F500", "#E09800", "#00E097", "#FA2100")
 Cols_Stand <- c("#45FB93", "#BC49FF", "#E0765A")
+
+
+# STOCK DENS VS SPECIES RICHNESS
+modl_Stk_Rich <- lm(formula = Alpha.Diversity ~ Stocking.Density, data = Combined_Data)
+summary(modl_Stk_Rich)
+# Not Significant
 
 # CANOPY OPENNESS VS SPECIES RICHNESS 
 
