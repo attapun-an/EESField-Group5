@@ -148,6 +148,18 @@ summary(modl_ALL_MIXED)
 tab_model(modl_ALL_MIXED, show.ci = FALSE, show.est = FALSE, file = "output/main_analysis/Modl_MIXED.html")
 # Yay, the transect is not responsible for any varience 
 
+
+# What about the tree species?
+modl_ANOVA <- aov(log10(Alpha.Diversity) ~ Overstorey.Species, data = Combined_Data)
+summary(modl_ANOVA)
+# Checking normality 
+par(mfrow = c(1,2))  # This code put two plots in the same window
+hist(modl_ANOVA$residuals)   # Makes histogram of residuals  
+plot(modl_ANOVA, which = 2)   # Makes Q-Q plot
+
+# Checking homoscedasticity (Homogeneity of variances)
+plot(modl_ANOVA, which = 1)  # Makes residuals VS fitted plot
+
 # Models with graphs----
 
 # set colours:
