@@ -7,8 +7,9 @@ Coded by attapun-an (attapunanivat@gmail.com)
 #### Summary
 Project 5 aims to investigate links between overstorey structure and understory diversity of coniferous forest. Our study site was in Cologin, Oban. Hemispherical Photography was used to calculate the LAI/Canopy Openness; Species richness and other possible confounding variables (pH, soil moisture) was collected for each plot. The images were processed in R to get the LAI/Canopy Openness. All the data was analyzed using linear models.
 
-<img src="images/QR.png" width="150" height="150" />    
+<img src="images/QR.png" width="150" height="150" />  
 
+[Website](https://canopycovervsunderstoreydiversity.wordpress.com/)
 
 #### Index
 | Item     | Description     |
